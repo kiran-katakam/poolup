@@ -56,7 +56,9 @@ describe("google signup token", () => {
     expect(await readGoogleSignup(await signSession("507f1f77bcf86cd799439011"))).toBeNull());
   it("a tampered token is rejected", async () => {
     const t = await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" });
-    const bad = t.slice(0, -1) + (t.endsWith("A") ? "B" : "A");
+    // Not the last char: it carries base64url padding bits, so changing it can still decode the same.
+    const i = t.length - 5;
+    const bad = t.slice(0, i) + (t[i] === "A" ? "B" : "A") + t.slice(i + 1);
     expect(await readGoogleSignup(bad)).toBeNull();
   });
 });
