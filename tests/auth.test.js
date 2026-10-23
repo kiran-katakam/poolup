@@ -54,4 +54,9 @@ describe("google signup token", () => {
     expect(await readSession(await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" }))).toBeNull());
   it("a session is not a signup token", async () =>
     expect(await readGoogleSignup(await signSession("507f1f77bcf86cd799439011"))).toBeNull());
+  it("a tampered token is rejected", async () => {
+    const t = await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" });
+    const bad = t.slice(0, -1) + (t.endsWith("A") ? "B" : "A");
+    expect(await readGoogleSignup(bad)).toBeNull();
+  });
 });

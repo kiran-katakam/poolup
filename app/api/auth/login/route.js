@@ -16,8 +16,8 @@ export async function POST(request) {
   try {
     await connectDB();
     const user = await User.findOne({ email: data.email });
-    // Same answer for unknown email and wrong password, so emails can't be probed.
-    if (!(await verifySecret(data.password, user?.passwordHash ?? DUMMY_HASH)) || !user) {
+    // Same 401 for unknown email, wrong password and Google-only accounts (no hash); always compare for timing.
+    if (!(await verifySecret(data.password, user?.passwordHash ?? DUMMY_HASH)) || !user?.passwordHash) {
       return fail(401, "Wrong email or password");
     }
     const response = NextResponse.json({ user });

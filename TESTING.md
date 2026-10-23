@@ -32,6 +32,7 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | R7 | Register, email send fails | Run locally with an invalid `RESEND` key, then request a code. | "Couldn't send email, try again." A retry is not blocked by the 60 s wait. |
 | L1 | Login, happy path | Log in as demo1 with the demo password. | Logged in, pools page. |
 | L2 | Login, wrong password | Right email, wrong password. | Generic error, not logged in. |
+| L2b | Login, Google-only account | For a user with no `passwordHash`, log in with any password, including `dummy-password`. | 401 "Wrong email or password", not logged in. |
 | C1 | Create, happy path | Pick from and to, a window, seats, fare, submit. | Pool page opens with you as the only member and the full fare each. |
 | C2 | Create, same place | Set from and to to the same place. | Rejected, nothing created. |
 | C3 | Create, past time | Set a window that has already ended. | Rejected. |
