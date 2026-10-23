@@ -8,6 +8,7 @@ import {
   isActive,
   chatBlockReason,
   canSeePool,
+  googleAccountError,
 } from "../lib/rules.js";
 import { PLACES, PLACE_IDS, placeLabel } from "../lib/places.js";
 
@@ -125,4 +126,14 @@ describe("canSeePool", () => {
     expect(canSeePool(openPool({ womenOnly: true }), {})).toBe(false);
     expect(canSeePool(openPool({ womenOnly: true }), { gender: "unspecified" })).toBe(false);
   });
+});
+
+describe("googleAccountError", () => {
+  it("accepts a verified college email", () =>
+    expect(googleAccountError({ email: "a@vitapstudent.ac.in", email_verified: true })).toBeNull());
+  it("rejects unverified", () =>
+    expect(googleAccountError({ email: "a@vitapstudent.ac.in", email_verified: false })).toBe("unverified"));
+  it("rejects other domains", () =>
+    expect(googleAccountError({ email: "a@gmail.com", email_verified: true })).toBe("not_college"));
+  it("rejects missing claims", () => expect(googleAccountError({})).toBe("unverified"));
 });
