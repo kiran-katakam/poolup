@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db.js";
 import { fail } from "@/lib/http.js";
-import { getUser } from "@/lib/auth.js";
+import { getUser, unauthorized } from "@/lib/auth.js";
 import { PLACE_IDS } from "@/lib/places.js";
 import { istDayRange } from "@/lib/rules.js";
 import { createPoolSchema, parseBody } from "@/lib/validation.js";
@@ -11,7 +11,7 @@ import Pool from "@/lib/models/Pool.js";
 export async function GET(request) {
   try {
     const user = await getUser(request);
-    if (!user) return fail(401, "Log in first");
+    if (!user) return unauthorized();
 
     const now = new Date();
     const q = request.nextUrl.searchParams;
@@ -43,15 +43,15 @@ export async function GET(request) {
 }
 
 export async function POST(request) {
-  const user = await getUser(request).catch(() => null);
-  if (!user) return fail(401, "Log in first");
-
-  const now = new Date();
-  const body = await request.json().catch(() => null);
-  const { data, error } = parseBody(createPoolSchema(now), body);
-  if (error) return fail(400, error);
-
   try {
+    const user = await getUser(request);
+    if (!user) return unauthorized();
+
+    const now = new Date();
+    const body = await request.json().catch(() => null);
+    const { data, error } = parseBody(createPoolSchema(now), body);
+    if (error) return fail(400, error);
+
     if (await hasActivePool(user._id, now)) return fail(409, "You're already in an active pool");
     const { sharePhone, ...fields } = data;
     const created = await Pool.create({

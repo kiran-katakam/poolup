@@ -41,7 +41,7 @@ export async function POST(request) {
       console.error(e);
       // Delete so the failed send doesn't block a retry with the 60s wait.
       await Otp.deleteOne({ email: data.email });
-      return fail(502, "Couldn't send the email, try again");
+      return fail(502, "Couldn't send email, try again");
     }
     return NextResponse.json({ ok: true });
   } catch (e) {

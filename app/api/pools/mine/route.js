@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/db.js";
 import { fail } from "@/lib/http.js";
-import { getUser } from "@/lib/auth.js";
+import { getUser, unauthorized } from "@/lib/auth.js";
 import { toPoolJSON, withMembers } from "@/lib/pools.js";
 import Pool from "@/lib/models/Pool.js";
 
 export async function GET(request) {
   try {
     const user = await getUser(request);
-    if (!user) return fail(401, "Log in first");
+    if (!user) return unauthorized();
     const now = new Date();
     const pool = await withMembers(
       Pool.findOne({ members: user._id, status: "open", departEnd: { $gt: now } }),

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { fail, isValidId } from "@/lib/http.js";
-import { getUser } from "@/lib/auth.js";
+import { getUser, unauthorized } from "@/lib/auth.js";
 import { shareSchema, parseBody } from "@/lib/validation.js";
 import { toPoolJSON, withMembers } from "@/lib/pools.js";
 import Pool from "@/lib/models/Pool.js";
@@ -8,7 +8,7 @@ import Pool from "@/lib/models/Pool.js";
 export async function POST(request, { params }) {
   try {
     const user = await getUser(request);
-    if (!user) return fail(401, "Log in first");
+    if (!user) return unauthorized();
     const { id } = await params;
     if (!isValidId(id)) return fail(404, "Pool not found");
 
