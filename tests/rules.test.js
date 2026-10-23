@@ -7,6 +7,7 @@ import {
   istDayRange,
   isActive,
   chatBlockReason,
+  canSeePool,
 } from "../lib/rules.js";
 import { PLACES, PLACE_IDS, placeLabel } from "../lib/places.js";
 
@@ -114,4 +115,14 @@ describe("chatBlockReason", () => {
     expect(chatBlockReason(openPool({ departEnd: now }), "u1", now)).toBe("ended"));
   it("checks membership before ended", () =>
     expect(chatBlockReason(openPool({ status: "cancelled" }), "u9", now)).toBe("not_member"));
+});
+
+describe("canSeePool", () => {
+  it("shows open pools to everyone", () => expect(canSeePool(openPool(), { gender: undefined })).toBe(true));
+  it("shows women-only pools to women", () => expect(canSeePool(openPool({ womenOnly: true }), { gender: "female" })).toBe(true));
+  it("hides them from men", () => expect(canSeePool(openPool({ womenOnly: true }), { gender: "male" })).toBe(false));
+  it("hides them when gender is unset or unspecified", () => {
+    expect(canSeePool(openPool({ womenOnly: true }), {})).toBe(false);
+    expect(canSeePool(openPool({ womenOnly: true }), { gender: "unspecified" })).toBe(false);
+  });
 });

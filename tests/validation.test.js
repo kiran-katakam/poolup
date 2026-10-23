@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   otpRequestSchema, registerSchema, loginSchema,
-  createPoolSchema, joinSchema, shareSchema, messageSchema, parseBody,
+  createPoolSchema, joinSchema, shareSchema, messageSchema, profileSchema, parseBody,
 } from "../lib/validation.js";
 
 const now = new Date("2026-10-24T10:00:00Z");
@@ -79,4 +79,11 @@ describe("messageSchema", () => {
   it("rejects over 500 chars", () =>
     expect(parseBody(messageSchema, { text: "a".repeat(501) }).error).toBe("Messages can be 500 characters at most"));
   it("accepts exactly 500", () => expect(parseBody(messageSchema, { text: "a".repeat(500) }).data).toBeTruthy());
+});
+
+describe("women-only schemas", () => {
+  it("profileSchema rejects unknown genders", () =>
+    expect(parseBody(profileSchema, { gender: "x" }).error).toBe("Pick an option from the list"));
+  it("createPoolSchema defaults womenOnly to false", () =>
+    expect(parseBody(schema, pool()).data.womenOnly).toBe(false));
 });
