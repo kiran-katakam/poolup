@@ -17,6 +17,7 @@ function toLocalInput(date) {
 export default function NewPoolPage() {
   const router = useRouter();
   const [form, setForm] = useState({ from: "campus", to: "", start: "", end: "", capacity: 4, fare: "400", share: true });
+  const [limits, setLimits] = useState({ min: "", max: "" }); // datetime-local min/max: now to 7 days ahead
   const [mine, setMine] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -28,6 +29,7 @@ export default function NewPoolPage() {
       // Default to the next half hour. Done in the browser: the current time can't be part of the prerendered page.
       const start = new Date(Math.ceil(Date.now() / HALF_HOUR) * HALF_HOUR);
       setForm((f) => ({ ...f, start: toLocalInput(start), end: toLocalInput(new Date(start.getTime() + HALF_HOUR)) }));
+      setLimits({ min: toLocalInput(new Date()), max: toLocalInput(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) });
     });
   }, [router]);
 
@@ -36,6 +38,7 @@ export default function NewPoolPage() {
   async function submit(e) {
     e.preventDefault();
     setError("");
+    if (!form.to || form.from === form.to) return setError("Pick two different places");
     if (!form.start || !form.end) return setError("Pick a start and end time");
     if (!form.fare) return setError("Enter the total fare for the auto");
     setBusy(true);
@@ -96,11 +99,11 @@ export default function NewPoolPage() {
           <div className="mt-1.5 flex flex-col gap-3">
             <label className="text-sm text-muted">
               Earliest
-              <input type="datetime-local" className="field text-ink" value={form.start} onChange={set("start")} />
+              <input type="datetime-local" className="field text-ink" min={limits.min} max={limits.max} value={form.start} onChange={set("start")} />
             </label>
             <label className="text-sm text-muted">
               Latest
-              <input type="datetime-local" className="field text-ink" value={form.end} onChange={set("end")} />
+              <input type="datetime-local" className="field text-ink" min={limits.min} max={limits.max} value={form.end} onChange={set("end")} />
             </label>
           </div>
           <p className="mt-1.5 text-sm text-muted">Up to 3 hours apart, within the next 7 days.</p>

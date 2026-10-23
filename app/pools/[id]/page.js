@@ -8,15 +8,15 @@ import { Fare, Seats, seatsLeftText } from "@/app/components/PoolCard";
 
 function statusBadge(pool) {
   if (pool.status === "cancelled") return { text: "CANCELLED", className: "border-bad text-bad" };
-  if (!pool.isActive) return { text: "ALREADY LEFT", className: "border-muted text-muted" };
+  if (!pool.isActive) return { text: "DEPARTED", className: "border-muted text-muted" };
   if (pool.isFull) return { text: "FULL", className: "border-ink bg-ink text-yellow" };
   return null;
 }
 
-function Loading({ error }) {
+function Loading() {
   return (
     <div aria-busy="true">
-      {error ? <p role="alert" className="font-semibold text-bad">{error}</p> : <span className="sr-only">Loading pool</span>}
+      <span className="sr-only">Loading pool</span>
       <div className="mt-2 h-9 w-3/4 rounded bg-line" />
       <div className="mt-6 h-[180px] rounded-[10px] bg-ink/85" />
     </div>
@@ -36,6 +36,7 @@ function Pool() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [myId, setMyId] = useState(null);
+  const [attempt, setAttempt] = useState(0); // bumped by "Try again" to reload
 
   useEffect(() => {
     api(`/api/pools/${id}`).then((r) => {
@@ -46,7 +47,7 @@ function Pool() {
     });
     // Only to mark "you" in the member list and skip your own WhatsApp button.
     api("/api/auth/me").then((r) => r.ok && setMyId(r.data.user._id));
-  }, [id, router]);
+  }, [id, router, attempt]);
 
   // Every action returns the updated pool, so the page re-renders from that.
   async function act(action, body) {
@@ -69,10 +70,19 @@ function Pool() {
     );
   }
 
-  if (pool === undefined) return <Loading error={error} />;
+  if (pool === undefined && error) {
+    return (
+      <>
+        <p role="alert" className="font-semibold text-bad">{error}</p>
+        <button type="button" className="btn mt-4" onClick={() => { setError(""); setAttempt((a) => a + 1); }}>Try again</button>
+      </>
+    );
+  }
+  if (pool === undefined) return <Loading />;
 
   const badge = statusBadge(pool);
-  const canJoin = !pool.isMember && pool.isActive && !pool.isFull;
+  const open = pool.isActive; // cancelled or departed pools are read-only
+  const canJoin = !pool.isMember && open && !pool.isFull;
 
   return (
     <>
@@ -88,11 +98,13 @@ function Pool() {
 
       <section aria-label="Fare" className="mt-5 flex flex-col items-center rounded-[10px] bg-ink px-4 py-6 text-center">
         <Fare value={pool.farePerPerson} className="text-[56px] leading-none" />
-        <span className="mt-2 text-xs tracking-[0.14em] text-white">EACH NOW</span>
+        <span className="mt-2 text-xs tracking-[0.14em] text-white">{open ? "EACH NOW" : "EACH"}</span>
         <span className="mt-4"><Seats taken={pool.memberCount} capacity={pool.capacity} size="h-5 w-8" tone="yellow" /></span>
-        <span className="mt-3 text-[15px] text-white">
-          {pool.isActive && `${seatsLeftText(pool)} · `}₹{pool.totalFare} split {pool.memberCount} {pool.memberCount === 1 ? "way" : "ways"}
-        </span>
+        {open && (
+          <span className="mt-3 text-[15px] text-white">
+            {seatsLeftText(pool)} · ₹{pool.totalFare} split {pool.memberCount} {pool.memberCount === 1 ? "way" : "ways"}
+          </span>
+        )}
       </section>
 
       <section aria-labelledby="members-heading" className="mt-6">
@@ -115,7 +127,7 @@ function Pool() {
             </li>
           ))}
         </ul>
-        {pool.isMember && pool.isActive && (
+        {pool.isMember && open && (
           <p className="mt-2 text-sm text-muted">WhatsApp buttons show only for people who chose to share their number.</p>
         )}
       </section>
@@ -134,7 +146,7 @@ function Pool() {
         </div>
       )}
 
-      {pool.isMember && pool.isActive && (
+      {pool.isMember && open && (
         <>
           <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
             <input type="checkbox" checked={pool.iShared} disabled={busy}
