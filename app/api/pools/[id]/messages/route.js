@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { fail, isValidId } from "@/lib/http.js";
 import { getUser, unauthorized } from "@/lib/auth.js";
-import { chatBlockReason } from "@/lib/rules.js";
+import { chatBlockReason, canSeePool } from "@/lib/rules.js";
 import { messageSchema, parseBody } from "@/lib/validation.js";
 import { toMessageJSON } from "@/lib/pools.js";
 import Pool from "@/lib/models/Pool.js";
@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
     if (!isValidId(id)) return fail(404, "Pool not found");
 
     const pool = await Pool.findById(id);
-    if (!pool) return fail(404, "Pool not found");
+    if (!pool || !canSeePool(pool, user)) return fail(404, "Pool not found");
     // An ended pool's chat stays readable for members, so only membership is checked here.
     if (chatBlockReason(pool, user._id, new Date()) === "not_member") {
       return fail(403, "Only pool members can see this chat");
@@ -42,7 +42,7 @@ export async function POST(request, { params }) {
     if (error) return fail(400, error);
 
     const pool = await Pool.findById(id);
-    if (!pool) return fail(404, "Pool not found");
+    if (!pool || !canSeePool(pool, user)) return fail(404, "Pool not found");
     const reason = chatBlockReason(pool, user._id, new Date());
     if (reason === "not_member") return fail(403, "Only pool members can see this chat");
     if (reason === "ended") return fail(409, "This pool has ended, so the chat is read-only");
