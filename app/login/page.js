@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client.js";
+import { useGuestOnly } from "@/app/components/useGuestOnly";
 
 const DEMO_EMAILS = ["demo1@vitapstudent.ac.in", "demo2@vitapstudent.ac.in"];
 const DEMO_PASSWORD = process.env.NEXT_PUBLIC_DEMO_PASSWORD;
@@ -14,6 +15,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const guest = useGuestOnly();
 
   async function submit(e) {
     e.preventDefault();
@@ -24,6 +26,8 @@ export default function LoginPage() {
     setError(r.data.error || "Couldn't log in, try again");
     setBusy(false);
   }
+
+  if (!guest) return null;
 
   return (
     <>
@@ -41,7 +45,7 @@ export default function LoginPage() {
             value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
-        <button className="btn" disabled={busy}>{busy ? "Logging in…" : "Log in"}</button>
+        <button type="submit" className="btn" disabled={busy}>{busy ? "Logging in…" : "Log in"}</button>
       </form>
 
       <p className="mt-4 text-[15px]">

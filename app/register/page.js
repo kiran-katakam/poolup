@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client.js";
+import { useGuestOnly } from "@/app/components/useGuestOnly";
 
 const label = "block text-[15px] font-semibold";
 const hint = "mt-1 block text-sm font-normal text-muted";
@@ -15,6 +16,7 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ otp: "", name: "", phone: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const guest = useGuestOnly();
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -46,6 +48,8 @@ export default function RegisterPage() {
     setForm({ ...form, otp: "" });
   }
 
+  if (!guest) return null;
+
   return (
     <>
       <h1 className="font-display text-[34px] font-bold leading-none">Create account</h1>
@@ -59,7 +63,7 @@ export default function RegisterPage() {
               value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@vitapstudent.ac.in" />
           </label>
           {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
-          <button className="btn" disabled={busy}>{busy ? "Sending…" : "Send code"}</button>
+          <button type="submit" className="btn" disabled={busy}>{busy ? "Sending…" : "Send code"}</button>
           <p className="text-sm text-muted">Code not showing up? Check your spam folder.</p>
         </form>
       ) : (
@@ -86,7 +90,7 @@ export default function RegisterPage() {
           <label className={label}>
             WhatsApp number
             <span className={hint}>10 digits. Only shown to people in your pool, and only if you choose.</span>
-            <input className="field font-mono font-medium" type="tel" inputMode="numeric" autoComplete="tel-national"
+            <input className="field font-mono font-medium" type="tel" inputMode="numeric" autoComplete="tel"
               value={form.phone} onChange={set("phone")} placeholder="98765 43210" />
           </label>
           <label className={label}>
@@ -96,7 +100,7 @@ export default function RegisterPage() {
               value={form.password} onChange={set("password")} />
           </label>
           {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
-          <button className="btn" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
+          <button type="submit" className="btn" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
         </form>
       )}
 

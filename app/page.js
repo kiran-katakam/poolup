@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { api } from "@/lib/client.js";
+import { useGuestOnly } from "@/app/components/useGuestOnly";
 
 // Seat pip from the pools list: filled = someone in that seat.
 function Seat() {
@@ -11,11 +9,7 @@ function Seat() {
 }
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    api("/api/auth/me").then((r) => r.ok && router.replace("/pools"));
-  }, [router]);
+  if (!useGuestOnly()) return null;
 
   return (
     <>
