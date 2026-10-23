@@ -15,5 +15,5 @@ export async function proxy(request) {
 
 // Only page routes; /api, /_next and static files never reach the proxy.
 export const config = {
-  matcher: ["/", "/login", "/register", "/pools/:path*", "/profile"],
+  matcher: ["/", "/login", "/register", "/finish-profile", "/pools/:path*", "/profile"],
 };
