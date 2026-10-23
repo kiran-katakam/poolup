@@ -30,4 +30,16 @@ describe("sessions", () => {
   it("returns null for garbage", async () => {
     expect(await readSession("garbage")).toBeNull();
   });
+  it("returns null for a token signed with a different secret", async () => {
+    const token = await signSession("abc");
+    process.env.JWT_SECRET = "another-secret-at-least-32-characters";
+    expect(await readSession(token)).toBeNull();
+    process.env.JWT_SECRET = "test-secret-at-least-32-characters-long";
+  });
+  it("signSession fails loudly when JWT_SECRET is missing", async () => {
+    const saved = process.env.JWT_SECRET;
+    delete process.env.JWT_SECRET;
+    await expect(signSession("abc")).rejects.toThrow("JWT_SECRET is not set");
+    process.env.JWT_SECRET = saved;
+  });
 });
