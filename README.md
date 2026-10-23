@@ -22,7 +22,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## Try it (2 minutes)
 
-The seeded demo pools are dated from seed time, so they will have departed by the time you read this. Make your own:
+The seed adds three sample pools run by seed-only "(demo)" accounts, so the list shows the ₹ each figure at ₹134, ₹200 and ₹400. Those accounts can't log in. The pools are dated from seed time, so they may have departed by the time you read this. `demo1` to `demo3` start in no pool, so this path works either way:
 
 1. Open the live site and log in as `demo1@vitapstudent.ac.in`. The password is shown on the login page.
 2. Create a pool.
@@ -40,7 +40,7 @@ git clone https://github.com/kiran-katakam/poolup.git
 cd poolup
 npm install
 cp .env.example .env     # then fill it in, see below
-npm run seed             # creates demo users and sample pools
+npm run seed             # demo1-3 logins plus sample pools by seed-only accounts
 npm run dev              # http://localhost:3000
 npm test                 # unit tests
 ```
@@ -63,12 +63,12 @@ Import the repo, add all six variables above, and deploy. `NEXT_PUBLIC_DEMO_PASS
 ## Known limitations
 
 - The OTP email may land in spam on the college mail server. The register page tells users to check spam.
-- Resend's free tier is 100 emails a day.
+- Resend's free tier is 100 emails a day. OTP requests are limited per email only, so someone could use made-up college addresses to use up that daily quota.
 - Two people tapping Join on two different pools at the same moment could end up in both. Fixing it needs a database transaction.
 - No brute-force limit on login.
 - Asking for a code for an already registered email says so, which reveals that the email has an account.
 - Cancel has no check that the pool is still open, so cancelling twice succeeds, and an expired pool can be marked cancelled.
-- Seeded demo pools expire. Create fresh ones to demo.
+- Seeded sample pools expire. Run `npm run seed` again, or create fresh ones to demo.
 - No end-to-end browser tests (see `TESTING.md`).
 - Default Next.js favicon; all pool pages share the title "PoolUp".
 - Not built yet: chat, women-only pools, Google sign-in, match alerts, auto queue.

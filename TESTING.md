@@ -10,7 +10,7 @@ Last run: 4 files, 43 tests, all passing.
 
 | File | What it checks |
 |---|---|
-| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight. |
+| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight. |
 | `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk. |
 | `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
@@ -40,7 +40,7 @@ Run against LIVE_URL_TBD (or `npm run dev`). Demo password is shown on the login
 | C6 | Create while in an active pool | Create a second pool as a user already in one. | Rejected (409) with a link to your current pool. |
 | J1 | Join, happy path | As demo2, open demo1's pool and join. | You appear in the member list. Seats left goes down and the ₹ each figure drops. |
 | J2 | Join, full pool | Fill a pool (capacity 2), then try with a third user. | Rejected with "full". |
-| J3 | Join, already in another pool | Join a pool as a user already in an active pool. | Rejected (409) with a link to your current pool. |
+| J3 | Join, already in another pool | Join a pool as a user already in an active pool. | Rejected (409). The page shows "You're already in another pool. Leave it first." as text, with no link. |
 | J4 | Join, race for last seat | Pool with 1 seat left. Two users open it, both press Join at the same moment. | Exactly one joins; the other sees "full". Seats never go below zero. |
 | J5 | Join, double tap | Tap Join twice quickly. | One membership only. |
 | S1 | Sharing on | Join with sharing on. As another member, open the pool. | Your name and a WhatsApp button are visible to members. |
@@ -54,6 +54,7 @@ Run against LIVE_URL_TBD (or `npm run dev`). Demo password is shown on the login
 | E2 | Cancelled pool view | Open a cancelled pool link. | Shows CANCELLED, no actions. |
 | E3 | Bad pool URL | Open `/pools/not-an-id` and `/pools/<valid-but-missing-id>`. | A clear "pool not found" state, not a crash. |
 | E4 | Logged out | Open `/pools` logged out. | Redirected to login. |
+| E6 | Stale session, deleted user | Log in, delete that user from the database, then reload `/pools`. | The API answers 401 and clears the `session` cookie, the page lands on login, and there is no redirect loop. |
 | E5 | Time zone | Create a pool for 5:00 PM. | Shown as 5:00 PM IST on every screen, on local and on the deployed (UTC) site. |
 
 ## Not tested and why
