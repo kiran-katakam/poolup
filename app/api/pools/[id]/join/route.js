@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { fail, isValidId } from "@/lib/http.js";
 import { getUser, unauthorized } from "@/lib/auth.js";
-import { joinBlockReason } from "@/lib/rules.js";
+import { canSeePool, joinBlockReason } from "@/lib/rules.js";
 import { joinSchema, parseBody } from "@/lib/validation.js";
 import { hasActivePool, toPoolJSON, withMembers } from "@/lib/pools.js";
 import Pool from "@/lib/models/Pool.js";
@@ -26,7 +26,7 @@ export async function POST(request, { params }) {
 
     const now = new Date();
     const existing = await Pool.findById(id);
-    if (!existing) return fail(404, "Pool not found");
+    if (!existing || !canSeePool(existing, user)) return fail(404, "Pool not found");
     const reason = joinBlockReason(existing, user._id, await hasActivePool(user._id, now), now);
     if (reason) return fail(409, MESSAGES[reason]);
 
