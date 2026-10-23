@@ -2,7 +2,7 @@
 
 Live site: https://poolup.kirankatakam.me
 
-PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phase 3 (women-only pools) is shipped too. Phases 4 to 6 are listed below as next.
+PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phase 3 (women-only pools) and Phase 4 (Google sign-in) are shipped too. Phases 5 and 6 are listed below as next.
 
 ## The problem
 
@@ -28,6 +28,10 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 - Set your gender on the Profile page. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
 - `demo2@vitapstudent.ac.in` is the female demo account, so use it to try women-only pools. `demo1` and `demo3` have no gender set.
+
+## Phase 4: Google sign-in
+
+- "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number on a "Finish your profile" page, with no OTP and no password.
 
 ## Try it (2 minutes)
 
@@ -65,10 +69,20 @@ Fill in `.env`:
 | `JWT_SECRET` | `openssl rand -base64 32` |
 | `DEMO_PASSWORD` | Password for the seeded demo accounts. |
 | `NEXT_PUBLIC_DEMO_PASSWORD` | Same value. It is shown on the login page for reviewers. |
+| `GOOGLE_CLIENT_ID` | OAuth client ID from Google Cloud, see below. Optional: without it the Google button sends you back to login with an error, and everything else works. |
+| `GOOGLE_CLIENT_SECRET` | The secret of the same OAuth client. |
+
+### Google sign-in (optional)
+
+1. In [Google Cloud Console](https://console.cloud.google.com/), create a project, then open APIs & Services, OAuth consent screen, and set it up as External with the app name and your email.
+2. Under Credentials, create an OAuth client ID of type Web application.
+3. Add these authorized redirect URIs: `http://localhost:3000/api/auth/google/callback` and `https://<your-domain>/api/auth/google/callback`.
+4. Copy the client ID and secret into `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`.
+5. Publish the consent screen. In Testing mode only the test users you list can sign in.
 
 ### Deploy to Vercel
 
-Import the repo, add all six variables above, and deploy. `NEXT_PUBLIC_DEMO_PASSWORD` must be set before the build, because Next inlines it at build time. Run `npm run seed` once against the same Atlas database.
+Import the repo, add the variables above (eight with Google sign-in), and deploy. `NEXT_PUBLIC_DEMO_PASSWORD` must be set before the build, because Next inlines it at build time. Run `npm run seed` once against the same Atlas database.
 
 ## Known limitations
 
@@ -86,11 +100,12 @@ Import the repo, add all six variables above, and deploy. `NEXT_PUBLIC_DEMO_PASS
 - Pools and their chat messages are deleted 1 day after the departure window ends.
 - Gender is self-declared, with no verification.
 - Changing your gender later doesn't remove you from a women-only pool you already joined.
-- Not built yet: Google sign-in, match alerts, auto queue.
+- Reviewers can't try Google sign-in without a college Google account; it is shown in the demo video instead.
+- A student who signed up with Google has no password and can't set one later, so they can only log in with Google.
+- Not built yet: match alerts, auto queue.
 
 ## Next
 
-- Phase 4: Google sign-in (college accounts only)
 - Phase 5: match alerts by email
 - Phase 6: auto queue for drivers and an admin
 

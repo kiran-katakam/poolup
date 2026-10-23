@@ -6,13 +6,13 @@
 npm test      # vitest run
 ```
 
-Last run: 4 files, 52 tests, all passing.
+Last run: 4 files, 70 tests, all passing.
 
 | File | What it checks |
 |---|---|
-| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only. |
-| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most. |
-| `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing. |
+| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only; `canSeePool` shows women-only pools only to women (not to men, unset or "prefer not to say"); `googleAccountError` refuses an unverified Google email and a non-college one. |
+| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most; profile gender must be one of the three options; the Google finish-profile form trims the name and rejects a bad phone. |
+| `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing; the Google signup token round-trips email and name, is not accepted as a session, a session token is not accepted as a signup token, and a tampered token is rejected. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
 
 The database routes and the UI are not unit tested. They are covered by the manual plan below.
@@ -68,10 +68,17 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | W4 | Women-only, non-female creates | As demo1, `POST /api/pools` with `womenOnly: true`. | 403. Nothing created. |
 | W5 | Women-only, join | As demo2, open the seeded "campus to trendset" women-only pool and join. | You join and appear in the member list. |
 | W6 | Profile gender | Open `/profile`, set gender to female, save, reload. | The value is kept. |
+| G1 | Google, new account | Logged out, press "Continue with Google" on `/login` and pick a college Google account that has no PoolUp account. | You land on `/finish-profile` with your email shown and your name filled in. Add a WhatsApp number and press Create account: you land on `/pools`, logged in. |
+| G2 | Google, existing account | Press "Continue with Google" with a college Google account already registered (by OTP or by G1). | Straight to `/pools`, logged in. No finish-profile step. |
+| G3 | Google, non-college account | Press "Continue with Google" and pick a gmail.com account. | Back on `/login` with "Use your @vitapstudent.ac.in or @vitap.ac.in Google account." No account is created. |
+| G4 | Google, cancelled | Press "Continue with Google", then press Cancel on Google's screen (or go back). | Back on `/login` with "Google sign-in didn't finish. Try again." |
+| G5 | Finish profile, expired | Open `/finish-profile` without signing in with Google first, or 15 min after G1's redirect. | "Sign in again" with a link back to log in. Submitting an old form answers 401 and shows the same state. |
+| G6 | Finish profile, bad phone | On `/finish-profile`, enter `12345` and submit. | "Enter a 10-digit Indian mobile number". `+91 98765 43210` is accepted. |
 
 ## Not tested and why
 
 - **No end-to-end browser tests.** Setting up Playwright with a seeded database and a fake mailbox would have cost more time than the deadline allowed. The manual plan above covers the same flows.
+- **Google sign-in (G1 to G4)** needs a real college Google account, so it is checked by hand on the live site and shown in the demo video. In development the pages were checked in headless Chrome: the button and both error messages on `/login`, the button on `/register`, `/finish-profile` with no cookie, and with a self-signed `google_signup` cookie for a `zz-test-` address (name filled in, account created, then deleted).
 - **Real OTP delivery** to a college inbox is tested manually on the live site after deploy (planned). Resend sending was verified during development through Resend's test address `delivered@resend.dev`.
 - **Race conditions** have no automated concurrency test. The OTP guess race (R3) was checked during development: 6 parallel wrong codes, none succeeded, and the code was deleted. The 60-second resend race (R4) was checked with an existing recent code and returned 429. The last-seat join race (J4, J5) is enforced by a single atomic database update but was not load-tested.
 - **Database outage** (500 with a general message) is not simulated.
