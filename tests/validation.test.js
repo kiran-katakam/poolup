@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   otpRequestSchema, registerSchema, loginSchema,
-  createPoolSchema, joinSchema, shareSchema, parseBody,
+  createPoolSchema, joinSchema, shareSchema, messageSchema, parseBody,
 } from "../lib/validation.js";
 
 const now = new Date("2026-10-24T10:00:00Z");
@@ -71,4 +71,12 @@ describe("join/share/parseBody", () => {
       expect(parseBody(registerSchema, d).error).toBeTypeOf("string");
     }
   });
+});
+
+describe("messageSchema", () => {
+  it("trims text", () => expect(parseBody(messageSchema, { text: "  hi  " }).data.text).toBe("hi"));
+  it("rejects blank text", () => expect(parseBody(messageSchema, { text: "   " }).error).toBe("Type a message"));
+  it("rejects over 500 chars", () =>
+    expect(parseBody(messageSchema, { text: "a".repeat(501) }).error).toBe("Messages can be 500 characters at most"));
+  it("accepts exactly 500", () => expect(parseBody(messageSchema, { text: "a".repeat(500) }).data).toBeTruthy());
 });

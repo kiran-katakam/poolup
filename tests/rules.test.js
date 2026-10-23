@@ -6,6 +6,7 @@ import {
   visibleMembers,
   istDayRange,
   isActive,
+  chatBlockReason,
 } from "../lib/rules.js";
 import { PLACES, PLACE_IDS, placeLabel } from "../lib/places.js";
 
@@ -103,4 +104,14 @@ describe("istDayRange", () => {
     expect(start.toISOString()).toBe("2026-10-23T18:30:00.000Z");
     expect(end.getTime() - start.getTime()).toBe(24 * 3600 * 1000);
   });
+});
+
+describe("chatBlockReason", () => {
+  it("lets a member of an active pool post", () => expect(chatBlockReason(openPool(), "u1", now)).toBeNull());
+  it("blocks non-members", () => expect(chatBlockReason(openPool(), "u9", now)).toBe("not_member"));
+  it("is read-only after a cancel", () => expect(chatBlockReason(openPool({ status: "cancelled" }), "u1", now)).toBe("ended"));
+  it("is read-only once departEnd has passed", () =>
+    expect(chatBlockReason(openPool({ departEnd: now }), "u1", now)).toBe("ended"));
+  it("checks membership before ended", () =>
+    expect(chatBlockReason(openPool({ status: "cancelled" }), "u9", now)).toBe("not_member"));
 });
