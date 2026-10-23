@@ -11,7 +11,7 @@ if (!password) throw new Error("DEMO_PASSWORD is not set");
 // Reviewer accounts: they start in no pool, so demo1 can create and demo2 can join.
 const demos = [
   { email: "demo1@vitapstudent.ac.in", name: "Aarav Demo", phone: "9000000001" },
-  { email: "demo2@vitapstudent.ac.in", name: "Diya Demo", phone: "9000000002" },
+  { email: "demo2@vitapstudent.ac.in", name: "Diya Demo", phone: "9000000002", gender: "female" },
   { email: "demo3@vitapstudent.ac.in", name: "Rohan Demo", phone: "9000000003" },
 ];
 
@@ -23,6 +23,7 @@ const seeds = [
   { email: "seed4@poolup.invalid", name: "Rohan (demo)", phone: "9000000014" },
   { email: "seed5@poolup.invalid", name: "Kiran (demo)", phone: "9000000015" },
   { email: "seed6@poolup.invalid", name: "Arjun (demo)", phone: "9000000016" },
+  { email: "seed7@poolup.invalid", name: "Priya (demo)", phone: "9000000017", gender: "female" },
 ];
 
 // members are indexes into seeds; the first one is the creator. No one is in two pools (one-pool rule).
@@ -30,12 +31,16 @@ const pools = [
   { from: "campus", to: "railway", hours: 2, members: [0, 1, 2] },
   { from: "bus-stand", to: "campus", hours: 5, members: [3, 4] },
   { from: "campus", to: "airport", hours: 26, members: [5] },
+  { from: "campus", to: "trendset", hours: 4, members: [6], womenOnly: true },
 ];
 
 async function upsertUser(account, passwordHash) {
+  // gender is set only when the account has one, so a stored value is never wiped.
+  const fields = { name: account.name, phone: account.phone, passwordHash };
+  if (account.gender) fields.gender = account.gender;
   return User.findOneAndUpdate(
     { email: account.email },
-    { name: account.name, phone: account.phone, passwordHash },
+    fields,
     { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
 }
@@ -66,6 +71,7 @@ for (const p of pools) {
     to: p.to,
     departStart,
     departEnd: new Date(departStart.getTime() + HALF_HOUR),
+    womenOnly: p.womenOnly ?? false,
     capacity: 4,
     totalFare: 400,
     creator: members[0],
