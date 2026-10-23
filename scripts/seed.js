@@ -27,14 +27,16 @@ for (const d of demos) {
 }
 
 await Pool.deleteMany({ creator: { $in: users.map((u) => u._id) } });
+const HALF_HOUR = 30 * 60e3;
 const now = Date.now();
 for (const [i, d] of demos.entries()) {
-  const departStart = new Date(now + d.hours * 3600e3);
+  // Round up to the next :00 or :30 so the demo shows tidy times like 5:30 pm.
+  const departStart = new Date(Math.ceil((now + d.hours * 3600e3) / HALF_HOUR) * HALF_HOUR);
   await Pool.create({
     from: d.from,
     to: d.to,
     departStart,
-    departEnd: new Date(departStart.getTime() + 30 * 60e3),
+    departEnd: new Date(departStart.getTime() + HALF_HOUR),
     capacity: 4,
     creator: users[i]._id,
     members: [users[i]._id],

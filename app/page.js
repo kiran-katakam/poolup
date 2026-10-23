@@ -1,7 +1,4 @@
-"use client";
-
 import Link from "next/link";
-import { useGuestOnly } from "@/app/components/useGuestOnly";
 
 // Seat pip from the pools list: filled = someone in that seat.
 function Seat() {
@@ -9,8 +6,6 @@ function Seat() {
 }
 
 export default function Home() {
-  if (!useGuestOnly()) return null;
-
   return (
     <>
       <h1 className="font-display text-[40px] font-bold leading-none tracking-[0.01em] text-balance">

@@ -47,7 +47,7 @@ export default function PoolCard({ pool }) {
         <span className="font-display text-[21px] font-bold leading-[1.1]">
           {placeShort(pool.from)} <span aria-hidden="true">→</span><span className="sr-only">to</span> {placeShort(pool.to)}
         </span>
-        <span className="mt-1 text-[13px] text-muted">{formatWindow(pool.departStart, pool.departEnd)}</span>
+        <span className="mt-1 font-mono text-[13px] tracking-[-0.03em] text-muted">{formatWindow(pool.departStart, pool.departEnd)}</span>
         {creator && <span className="text-[13px] text-muted">{pool.isCreator ? "Your pool" : `${creator}'s pool`}</span>}
         <span className="mt-2.5"><Seats taken={pool.memberCount} capacity={pool.capacity} /></span>
         <span className={`mt-1.5 text-[13px] font-semibold ${pool.isFull ? "text-muted" : "text-go"}`}>{seatsLeftText(pool)}</span>

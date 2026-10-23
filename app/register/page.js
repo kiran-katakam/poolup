@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client.js";
-import { useGuestOnly } from "@/app/components/useGuestOnly";
 
 const label = "block text-[15px] font-semibold";
 const hint = "mt-1 block text-sm font-normal text-muted";
@@ -16,7 +15,6 @@ export default function RegisterPage() {
   const [form, setForm] = useState({ otp: "", name: "", phone: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const guest = useGuestOnly();
 
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
@@ -47,8 +45,6 @@ export default function RegisterPage() {
     setError("");
     setForm({ ...form, otp: "" });
   }
-
-  if (!guest) return null;
 
   return (
     <>

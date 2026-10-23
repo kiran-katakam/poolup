@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { api, nextIstDays } from "@/lib/client.js";
+import { api, formatWindow, nextIstDays } from "@/lib/client.js";
 import { PLACES, placeShort } from "@/lib/places.js";
 import PoolCard from "@/app/components/PoolCard";
 
-const filterSelect = "h-11 min-w-0 flex-1 rounded-md border border-field bg-white px-2 text-sm";
+const filterSelect = "select-chevron h-11 min-w-0 flex-1 rounded-md border border-field bg-white pl-2 pr-7 text-sm";
 
 export default function PoolsPage() {
   const router = useRouter();
@@ -42,8 +42,11 @@ export default function PoolsPage() {
       {mine && (
         <Link href={`/pools/${mine.id}`}
           className="mb-4 flex min-h-11 items-center justify-between gap-3 rounded-lg bg-ink px-3 py-2 text-white">
-          <span className="font-display text-lg font-bold">
-            <span className="tracking-[0.04em] text-yellow">YOUR POOL</span> {placeShort(mine.from)} <span aria-hidden="true">→</span><span className="sr-only">to</span> {placeShort(mine.to)}
+          <span className="flex min-w-0 flex-col">
+            <span className="font-display text-lg font-bold">
+              <span className="tracking-[0.04em] text-yellow">YOUR POOL</span> {placeShort(mine.from)} <span aria-hidden="true">→</span><span className="sr-only">to</span> {placeShort(mine.to)}
+            </span>
+            <span className="font-mono text-[13px]">{formatWindow(mine.departStart, mine.departEnd)}</span>
           </span>
           <span className="shrink-0 font-mono text-[15px] font-bold text-yellow">₹{mine.farePerPerson} each</span>
         </Link>

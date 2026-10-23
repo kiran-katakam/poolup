@@ -4,7 +4,7 @@ import Nav from "@/app/components/Nav";
 import "./globals.css";
 
 const barlow = Barlow_Condensed({ variable: "--font-barlow", subsets: ["latin"], weight: ["600", "700"] });
-const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin"] });
+const robotoMono = Roboto_Mono({ variable: "--font-roboto-mono", subsets: ["latin", "latin-ext"] });
 
 export const metadata = {
   title: "PoolUp",
