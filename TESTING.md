@@ -6,12 +6,12 @@
 npm test      # vitest run
 ```
 
-Last run: 4 files, 43 tests, all passing.
+Last run: 4 files, 52 tests, all passing.
 
 | File | What it checks |
 |---|---|
-| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight. |
-| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk. |
+| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only. |
+| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most. |
 | `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
 
@@ -56,6 +56,11 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | E4 | Logged out | Open `/pools` logged out. | Redirected to login. |
 | E6 | Stale session, deleted user | Log in, delete that user from the database, then reload `/pools`. | The API answers 401 and clears the `session` cookie, the page lands on login, and there is no redirect loop. |
 | E5 | Time zone | Create a pool for 5:00 PM. | Shown as 5:00 PM IST on every screen, on local and on the deployed (UTC) site. |
+| M1 | Chat, live | demo1 and demo2 (private window) in one pool. Send a message from each. | The message shows on the other screen within about 2 s. Your own messages are yellow and labelled "You". |
+| M2 | Chat, member leaves | demo2 leaves the pool with the chat open. | demo2's chat panel disappears, and the Network tab shows no more requests to `/messages`. |
+| M3 | Chat, pool cancelled | demo1 cancels the pool with the chat open. | The input is replaced by "This pool has ended, so the chat is read-only." Old messages stay visible and polling stops. |
+| M4 | Chat, non-member | As demo3 (not in the pool), call `GET /api/pools/<id>/messages`. | 403 "Only pool members can see this chat". No chat panel on the pool page. |
+| M5 | Chat, blank message | Press Send with an empty or spaces-only box. | 400 "Type a message", shown under the chat. Nothing is posted. |
 
 ## Not tested and why
 

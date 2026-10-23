@@ -2,7 +2,7 @@
 
 Live site: https://poolup.kirankatakam.me
 
-PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped. Phases 2 to 6 are listed below as next.
+PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phases 3 to 6 are listed below as next.
 
 ## The problem
 
@@ -20,6 +20,10 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 - Join, leave, cancel (creator only). One active pool per student. Pools expire after their departure window.
 - Sharing your WhatsApp number is a choice per pool (on by default). Members see only the numbers that were shared, with a WhatsApp button.
 
+## Phase 2: pool chat
+
+- Members of a pool get a chat on the pool page, so they can plan the meeting point without sharing a number. Non-members can't read or post. Once the pool is cancelled or departed, the chat is read-only.
+
 ## Try it (2 minutes)
 
 The seed adds three sample pools run by seed-only "(demo)" accounts, so the list shows the ₹ each figure at ₹134, ₹200 and ₹400. Those accounts can't log in. The pools are dated from seed time, so they may have departed by the time you read this. `demo1` to `demo3` start in no pool, so this path works either way:
@@ -28,6 +32,7 @@ The seed adds three sample pools run by seed-only "(demo)" accounts, so the list
 2. Create a pool.
 3. In a private window, log in as `demo2@vitapstudent.ac.in`, open the pool and join it, with number sharing on, then try off.
 4. Watch the ₹ each figure drop as people join, and the WhatsApp button appear for members who shared.
+5. Send a chat message from one window and watch it show up in the other.
 
 Real sign-up needs a college inbox, so reviewers should use the demo accounts. `demo3@vitapstudent.ac.in` also exists if you want a third member.
 
@@ -71,11 +76,13 @@ Import the repo, add all six variables above, and deploy. `NEXT_PUBLIC_DEMO_PASS
 - Seeded sample pools expire. Run `npm run seed` again, or create fresh ones to demo.
 - No end-to-end browser tests (see `TESTING.md`).
 - Default Next.js favicon; all pool pages share the title "PoolUp".
-- Not built yet: chat, women-only pools, Google sign-in, match alerts, auto queue.
+- Chat polls every 2 s, so a new message can take up to about 2 s to show up.
+- No rate limit on chat messages.
+- Pools and their chat messages are deleted 1 day after the departure window ends.
+- Not built yet: women-only pools, Google sign-in, match alerts, auto queue.
 
 ## Next
 
-- Phase 2: live chat per pool
 - Phase 3: women-only pools
 - Phase 4: Google sign-in (college accounts only)
 - Phase 5: match alerts by email
