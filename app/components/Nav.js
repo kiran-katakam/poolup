@@ -33,8 +33,8 @@ export default function Nav() {
           {user && (
             <div className="flex items-center">
               {pathname !== "/pools" && <Link href="/pools" className={navLink}>Pools</Link>}
-              <span className="max-w-28 truncate pl-2 text-[15px] font-semibold">{user.name.split(" ")[0]}</span>
-              <span aria-hidden="true" className="pl-1.5">·</span>
+              <Link href="/profile" className={`${navLink} max-w-28 truncate`}>{user.name.split(" ")[0]}</Link>
+              <span aria-hidden="true">·</span>
               <button type="button" onClick={logOut} className={`${navLink} cursor-pointer`}>Log out</button>
             </div>
           )}

@@ -87,9 +87,16 @@ function Pool() {
 
   return (
     <>
-      {badge && (
-        <p className={`mb-3 inline-block rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
-          {badge.text}
+      {(badge || pool.womenOnly) && (
+        <p className="mb-3 flex flex-wrap gap-2">
+          {badge && (
+            <span className={`rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
+              {badge.text}
+            </span>
+          )}
+          {pool.womenOnly && (
+            <span className="rounded border-2 border-ink px-2 py-0.5 font-display text-lg font-bold uppercase tracking-[0.06em]">Women only</span>
+          )}
         </p>
       )}
       <h1 className="font-display text-[34px] font-bold leading-[1.05] text-balance">
