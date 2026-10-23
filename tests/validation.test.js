@@ -86,4 +86,9 @@ describe("women-only schemas", () => {
     expect(parseBody(profileSchema, { gender: "x" }).error).toBe("Pick an option from the list"));
   it("createPoolSchema defaults womenOnly to false", () =>
     expect(parseBody(schema, pool()).data.womenOnly).toBe(false));
+  it("profileSchema accepts the three genders", () => {
+    for (const gender of ["female", "male", "unspecified"]) expect(parseBody(profileSchema, { gender }).data.gender).toBe(gender);
+  });
+  it("createPoolSchema keeps womenOnly: true", () =>
+    expect(parseBody(schema, pool({ womenOnly: true })).data.womenOnly).toBe(true));
 });
