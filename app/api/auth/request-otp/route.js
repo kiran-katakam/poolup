@@ -20,18 +20,20 @@ export async function POST(request) {
     if (await User.exists({ email: data.email })) return fail(409, "You already have an account. Log in instead.");
 
     const now = Date.now();
-    const old = await Otp.findOne({ email: data.email });
-    if (old && now - old.createdAt.getTime() < RESEND_WAIT_MS) {
-      const secondsLeft = Math.ceil((RESEND_WAIT_MS - (now - old.createdAt.getTime())) / 1000);
-      return fail(429, `Wait ${secondsLeft}s before asking for another code`);
-    }
-
     const code = generateOtp();
-    await Otp.findOneAndUpdate(
-      { email: data.email },
-      { codeHash: await hashSecret(code), attempts: 0, expiresAt: new Date(now + OTP_LIFETIME_MS), createdAt: new Date(now) },
-      { upsert: true },
-    );
+    try {
+      // The 60s wait is part of the filter: a recent Otp misses it, and the upsert then hits the unique email index.
+      await Otp.findOneAndUpdate(
+        { email: data.email, createdAt: { $lte: new Date(now - RESEND_WAIT_MS) } },
+        { $set: { codeHash: await hashSecret(code), attempts: 0, expiresAt: new Date(now + OTP_LIFETIME_MS), createdAt: new Date(now) } },
+        { upsert: true },
+      );
+    } catch (e) {
+      if (e.code !== 11000) throw e;
+      const recent = await Otp.findOne({ email: data.email });
+      const age = recent ? now - recent.createdAt.getTime() : RESEND_WAIT_MS;
+      return fail(429, `Wait ${Math.max(1, Math.ceil((RESEND_WAIT_MS - age) / 1000))}s before asking for another code`);
+    }
 
     try {
       await sendOtp(data.email, code);

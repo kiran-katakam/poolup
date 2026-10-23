@@ -15,12 +15,16 @@ export async function POST(request) {
 
   try {
     await connectDB();
-    const otp = await Otp.findOne({ email: data.email });
-    if (!otp || otp.expiresAt <= new Date()) return fail(400, "Code expired, request a new one");
+    // Claim an attempt before comparing, so parallel guesses can't exceed the limit.
+    const otp = await Otp.findOneAndUpdate(
+      { email: data.email, expiresAt: { $gt: new Date() }, attempts: { $lt: MAX_ATTEMPTS } },
+      { $inc: { attempts: 1 } },
+      { returnDocument: "after" },
+    );
+    if (!otp) return fail(400, "Code expired, request a new one");
 
     if (!(await verifySecret(data.otp, otp.codeHash))) {
-      const updated = await Otp.findByIdAndUpdate(otp._id, { $inc: { attempts: 1 } }, { new: true });
-      if (updated && updated.attempts >= MAX_ATTEMPTS) await Otp.deleteOne({ _id: otp._id });
+      if (otp.attempts >= MAX_ATTEMPTS) await Otp.deleteOne({ _id: otp._id });
       return fail(400, "Wrong code");
     }
 
