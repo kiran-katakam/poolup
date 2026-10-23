@@ -126,6 +126,12 @@ describe("canSeePool", () => {
     expect(canSeePool(openPool({ womenOnly: true }), {})).toBe(false);
     expect(canSeePool(openPool({ womenOnly: true }), { gender: "unspecified" })).toBe(false);
   });
+  it("shows a women-only pool to a male current member (plain ids)", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: ["u1"] }), { _id: "u1", gender: "male" })).toBe(true));
+  it("shows a women-only pool to a male current member (populated)", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: [{ _id: "u1" }] }), { _id: "u1", gender: "male" })).toBe(true));
+  it("still hides it from a male non-member", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: ["u1"] }), { _id: "u9", gender: "male" })).toBe(false));
 });
 
 describe("googleAccountError", () => {
