@@ -10,7 +10,7 @@ VIT-AP is about 18 km outside Vijayawada. An auto from campus to the bus stand, 
 
 ## Who it is for
 
-VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and six places: Vijayawada Bus Stand, Vijayawada Railway Station, Gannavaram Airport, PVP Square, Trendset Mall. Staff with `@vitap.ac.in` emails can also sign up.
+VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city spots: Vijayawada Bus Stand, Vijayawada Railway Station, Gannavaram Airport, PVP Square, Trendset Mall. Staff with `@vitap.ac.in` emails can also sign up.
 
 ## What Phase 1 does
 
@@ -36,8 +36,8 @@ Real sign-up needs a college inbox, so reviewers should use the demo accounts. `
 Needs Node 22 (the seed script uses `node --env-file`).
 
 ```bash
-git clone <this repo>
-cd <repo>
+git clone https://github.com/kiran-katakam/poolup.git
+cd poolup
 npm install
 cp .env.example .env     # then fill it in, see below
 npm run seed             # creates demo users and sample pools

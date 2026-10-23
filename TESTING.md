@@ -29,7 +29,7 @@ Run against LIVE_URL_TBD (or `npm run dev`). Demo password is shown on the login
 | R4 | Register, resend within 60 s | Request a code, request again immediately. | Rejected (429) with the seconds left. After 60 s it works. |
 | R5 | Register, non-college email | Use a gmail.com address. | "Use your @vitapstudent.ac.in or @vitap.ac.in email". No email is sent. |
 | R6 | Register, email already registered | Use `demo1@vitapstudent.ac.in`. | Message pointing you to log in. |
-| R7 | Register, email send fails | (Only if easy to force, e.g. a bad `RESEND` key locally.) | "Couldn't send email, try again." A retry is not blocked by the 60 s wait. |
+| R7 | Register, email send fails | Run locally with an invalid `RESEND` key, then request a code. | "Couldn't send email, try again." A retry is not blocked by the 60 s wait. |
 | L1 | Login, happy path | Log in as demo1 with the demo password. | Logged in, pools page. |
 | L2 | Login, wrong password | Right email, wrong password. | Generic error, not logged in. |
 | C1 | Create, happy path | Pick from and to, a window, seats, fare, submit. | Pool page opens with you as the only member and the full fare each. |
@@ -59,7 +59,7 @@ Run against LIVE_URL_TBD (or `npm run dev`). Demo password is shown on the login
 ## Not tested and why
 
 - **No end-to-end browser tests.** Setting up Playwright with a seeded database and a fake mailbox would have cost more time than the deadline allowed. The manual plan above covers the same flows.
-- **Real OTP delivery** was tested manually once on the live site, with a real college inbox. During development, mail was only sent to Resend's test address.
-- **Race conditions (J4, J5, R3, R4)** are handled with atomic database updates, and checked by hand rather than by an automated concurrency test.
+- **Real OTP delivery** to a college inbox is tested manually on the live site after deploy (planned). Resend sending was verified during development through Resend's test address `delivered@resend.dev`.
+- **Race conditions** have no automated concurrency test. The OTP guess race (R3) was checked during development: 6 parallel wrong codes, none succeeded, and the code was deleted. The 60-second resend race (R4) was checked with an existing recent code and returned 429. The last-seat join race (J4, J5) is enforced by a single atomic database update but was not load-tested.
 - **Database outage** (500 with a general message) is not simulated.
 - **Login brute force** has no limit and is not tested (see known limitations in `README.md`).
