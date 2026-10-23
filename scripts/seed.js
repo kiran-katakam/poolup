@@ -35,9 +35,10 @@ const pools = [
 ];
 
 async function upsertUser(account, passwordHash) {
-  // gender is set only when the account has one, so a stored value is never wiped.
-  const fields = { name: account.name, phone: account.phone, passwordHash };
-  if (account.gender) fields.gender = account.gender;
+  // Only demo/seed emails are touched, so the file is the source of truth for gender.
+  const fields = { $set: { name: account.name, phone: account.phone, passwordHash } };
+  if (account.gender) fields.$set.gender = account.gender;
+  else fields.$unset = { gender: 1 };
   return User.findOneAndUpdate(
     { email: account.email },
     fields,
