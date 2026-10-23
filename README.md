@@ -2,7 +2,7 @@
 
 Live site: https://poolup.kirankatakam.me
 
-PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phases 3 to 6 are listed below as next.
+PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phase 3 (women-only pools) is shipped too. Phases 4 to 6 are listed below as next.
 
 ## The problem
 
@@ -23,6 +23,11 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 ## Phase 2: pool chat
 
 - Members of a pool get a chat on the pool page, so they can plan the meeting point without sharing a number. Non-members can't read or post. Once the pool is cancelled or departed, the chat is read-only.
+
+## Phase 3: women-only pools
+
+- Set your gender on the Profile page. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
+- `demo2@vitapstudent.ac.in` is the female demo account, so use it to try women-only pools. `demo1` and `demo3` have no gender set.
 
 ## Try it (2 minutes)
 
@@ -79,11 +84,12 @@ Import the repo, add all six variables above, and deploy. `NEXT_PUBLIC_DEMO_PASS
 - Chat polls every 2 s, so a new message can take up to about 2 s to show up.
 - No rate limit on chat messages.
 - Pools and their chat messages are deleted 1 day after the departure window ends.
-- Not built yet: women-only pools, Google sign-in, match alerts, auto queue.
+- Gender is self-declared, with no verification.
+- Changing your gender later doesn't remove you from a women-only pool you already joined.
+- Not built yet: Google sign-in, match alerts, auto queue.
 
 ## Next
 
-- Phase 3: women-only pools
 - Phase 4: Google sign-in (college accounts only)
 - Phase 5: match alerts by email
 - Phase 6: auto queue for drivers and an admin

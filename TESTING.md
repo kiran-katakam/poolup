@@ -61,6 +61,12 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | M3 | Chat, pool cancelled | demo1 cancels the pool with the chat open. | The input is replaced by "This pool has ended, so the chat is read-only." Old messages stay visible and polling stops. |
 | M4 | Chat, non-member | As demo3 (not in the pool), call `GET /api/pools/<id>/messages`. | 403 "Only pool members can see this chat". No chat panel on the pool page. |
 | M5 | Chat, blank message | Press Send with an empty or spaces-only box. | 400 "Type a message", shown under the chat. Nothing is posted. |
+| W1 | Women-only, create | As demo2 (female), tick "Women only" on New pool and submit. | The pool page shows a "Women only" badge. |
+| W2 | Women-only, hidden from list | As demo1 (no gender), open `/pools`. | The seeded women-only pool (campus to trendset) is not listed. demo1 sees 3 pools, demo2 sees 4. |
+| W3 | Women-only, direct link | As demo1, open a women-only pool's URL, and call `POST /api/pools/<id>/join`. | Pool not found (404), not 403. |
+| W4 | Women-only, non-female creates | As demo1, `POST /api/pools` with `womenOnly: true`. | 403. Nothing created. |
+| W5 | Women-only, join | As demo2, open the seeded "campus to trendset" women-only pool and join. | You join and appear in the member list. |
+| W6 | Profile gender | Open `/profile`, set gender to female, save, reload. | The value is kept. |
 
 ## Not tested and why
 
