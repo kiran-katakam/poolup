@@ -19,7 +19,7 @@ The database routes and the UI are not unit tested. They are covered by the manu
 
 ## Manual test plan
 
-Run against LIVE_URL_TBD (or `npm run dev`). Demo password is shown on the login page. Use two browsers (or one plus a private window) for the join tests.
+Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is shown on the login page. Use two browsers (or one plus a private window) for the join tests.
 
 | ID | Flow | Steps | Expected |
 |---|---|---|---|

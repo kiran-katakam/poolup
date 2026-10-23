@@ -1,6 +1,6 @@
 # PoolUp
 
-Live site: LIVE_URL_TBD
+Live site: https://poolup.kirankatakam.me
 
 PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped. Phases 2 to 6 are listed below as next.
 
