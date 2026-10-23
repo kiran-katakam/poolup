@@ -2,7 +2,7 @@
 
 Live site: https://poolup.kirankatakam.me
 
-PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phase 1 is shipped, plus Phase 2 (pool chat). Phase 3 (women-only pools) and Phase 4 (Google sign-in) are shipped too. Phases 5 and 6 are listed below as next.
+PoolUp is a web app where VIT-AP students find others going the same way and split an auto. Phases 1 to 4 are shipped: pooling, pool chat, women-only pools and Google sign-in. Phases 5 and 6 are listed below as next.
 
 ## The problem
 
@@ -35,7 +35,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## Try it (2 minutes)
 
-The seed adds three sample pools run by seed-only "(demo)" accounts, so the list shows the ₹ each figure at ₹134, ₹200 and ₹400. Those accounts can't log in. The pools are dated from seed time, so they may have departed by the time you read this. `demo1` to `demo3` start in no pool, so this path works either way:
+The seed adds four sample pools run by seed-only "(demo)" accounts, one of them women-only (only `demo2` can see it). Those accounts can't log in. The pools depart soon after seed time and are deleted 1 day after their departure window, so you may need to create a pool yourself. `demo1` to `demo3` start in no pool, so this path works either way:
 
 1. Open the live site and log in as `demo1@vitapstudent.ac.in`. The password is shown on the login page.
 2. Create a pool.
@@ -92,6 +92,7 @@ Import the repo, add the variables above (eight with Google sign-in), and deploy
 - No brute-force limit on login.
 - Asking for a code for an already registered email says so, which reveals that the email has an account.
 - Cancel has no check that the pool is still open, so cancelling twice succeeds, and an expired pool can be marked cancelled.
+- Google sign-in only works on https://poolup.kirankatakam.me (the redirect URI registered with Google), not on the *.vercel.app host.
 - Seeded sample pools expire. Run `npm run seed` again, or create fresh ones to demo.
 - No end-to-end browser tests (see `TESTING.md`).
 - Default Next.js favicon; all pool pages share the title "PoolUp".

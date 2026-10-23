@@ -6,11 +6,11 @@
 npm test      # vitest run
 ```
 
-Last run: 4 files, 70 tests, all passing.
+Last run: 4 files, 73 tests, all passing.
 
 | File | What it checks |
 |---|---|
-| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only; `canSeePool` shows women-only pools only to women (not to men, unset or "prefer not to say"); `googleAccountError` refuses an unverified Google email and a non-college one. |
+| `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only; `canSeePool` shows women-only pools only to women (not to men, unset or "prefer not to say") but also to its current members; `googleAccountError` refuses an unverified Google email and a non-college one. |
 | `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most; profile gender must be one of the three options; the Google finish-profile form trims the name and rejects a bad phone. |
 | `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing; the Google signup token round-trips email and name, is not accepted as a session, a session token is not accepted as a signup token, and a tampered token is rejected. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
@@ -51,7 +51,7 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | V1 | Leave | Join, then Leave. | You are removed, seats and fare update, you can join another pool. |
 | V2 | Cancel (creator) | Creator cancels. | Pool shows CANCELLED. No join or leave actions. |
 | V3 | Cancel (non-creator) | Member tries to cancel. | No cancel button; the API refuses. |
-| E1 | Expired pool | Open a seeded pool after its time has passed. | Shows DEPARTED, no actions, not in the active list. |
+| E1 | Expired pool | Open a seeded pool after its time has passed. | Shows DEPARTED, or "not found" once a day has passed (pools are deleted 1 day after departure). No actions, not in the active list. |
 | E2 | Cancelled pool view | Open a cancelled pool link. | Shows CANCELLED, no actions. |
 | E3 | Bad pool URL | Open `/pools/not-an-id` and `/pools/<valid-but-missing-id>`. | A clear "pool not found" state, not a crash. |
 | E4 | Logged out | Open `/pools` logged out. | Redirected to login. |
@@ -59,15 +59,16 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | E5 | Time zone | Create a pool for 5:00 PM. | Shown as 5:00 PM IST on every screen, on local and on the deployed (UTC) site. |
 | M1 | Chat, live | demo1 and demo2 (private window) in one pool. Send a message from each. | The message shows on the other screen within about 2 s. Your own messages are yellow and labelled "You". |
 | M2 | Chat, member leaves | demo2 leaves the pool with the chat open. | demo2's chat panel disappears, and the Network tab shows no more requests to `/messages`. |
-| M3 | Chat, pool cancelled | demo1 cancels the pool with the chat open. | The input is replaced by "This pool has ended, so the chat is read-only." Old messages stay visible and polling stops. |
+| M3 | Chat, pool cancelled | demo1 cancels the pool with the chat open. | The input is replaced by "This pool has ended, so the chat is read-only." Old messages stay visible and polling stops in the canceller's window; other members' panels switch to read-only after they reload. |
 | M4 | Chat, non-member | As demo3 (not in the pool), call `GET /api/pools/<id>/messages`. | 403 "Only pool members can see this chat". No chat panel on the pool page. |
 | M5 | Chat, blank message | Press Send with an empty or spaces-only box. | 400 "Type a message", shown under the chat. Nothing is posted. |
 | W1 | Women-only, create | As demo2 (female), tick "Women only" on New pool and submit. | The pool page shows a "Women only" badge. |
-| W2 | Women-only, hidden from list | As demo1 (no gender), open `/pools`. | The seeded women-only pool (campus to trendset) is not listed. demo1 sees 3 pools, demo2 sees 4. |
+| W2 | Women-only, hidden from list | As demo1 (no gender), open `/pools`. | A women-only pool (create one as demo2 per W1) is not in demo1's list, and demo2 sees it. |
 | W3 | Women-only, direct link | As demo1, open a women-only pool's URL, and call `POST /api/pools/<id>/join`. | Pool not found (404), not 403. |
 | W4 | Women-only, non-female creates | As demo1, `POST /api/pools` with `womenOnly: true`. | 403. Nothing created. |
-| W5 | Women-only, join | As demo2, open the seeded "campus to trendset" women-only pool and join. | You join and appear in the member list. |
-| W6 | Profile gender | Open `/profile`, set gender to female, save, reload. | The value is kept. |
+| W5 | Women-only, join | As demo2, open a women-only pool (create one as demo2 per W1) from `/pools`. | It is listed, opens, and you appear in the member list. |
+| W6 | Profile gender | As demo3, open `/profile`, set gender to female, save, reload. Then set it back to Prefer not to say. | The value is kept after each save. |
+| W7 | Gender change keeps access | A member of a women-only pool changes gender to Male in `/profile`. | They can still open the pool and Leave. |
 | G1 | Google, new account | Logged out, press "Continue with Google" on `/login` and pick a college Google account that has no PoolUp account. | You land on `/finish-profile` with your email shown and your name filled in. Add a WhatsApp number and press Create account: you land on `/pools`, logged in. |
 | G2 | Google, existing account | Press "Continue with Google" with a college Google account already registered (by OTP or by G1). | Straight to `/pools`, logged in. No finish-profile step. |
 | G3 | Google, non-college account | Press "Continue with Google" and pick a gmail.com account. | Back on `/login` with "Use your @vitapstudent.ac.in or @vitap.ac.in Google account." No account is created. |
