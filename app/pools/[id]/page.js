@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { api, formatWindow } from "@/lib/client.js";
 import { Fare, Seats, seatsLeftText } from "@/app/components/PoolCard";
+import Chat from "@/app/components/Chat";
 
 function statusBadge(pool) {
   if (pool.status === "cancelled") return { text: "CANCELLED", className: "border-bad text-bad" };
@@ -147,26 +148,28 @@ function Pool() {
       )}
 
       {pool.isMember && open && (
-        <>
-          <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
-            <input type="checkbox" checked={pool.iShared} disabled={busy}
-              onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
-            Share my WhatsApp number with this pool
-          </label>
+        <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
+          <input type="checkbox" checked={pool.iShared} disabled={busy}
+            onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
+          Share my WhatsApp number with this pool
+        </label>
+      )}
 
-          <div className="mt-12 border-t border-line pt-6">
-            {pool.isCreator ? (
-              <button type="button" className="btn btn-outline" disabled={busy}
-                onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
-                Cancel pool
-              </button>
-            ) : (
-              <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
-                Leave pool
-              </button>
-            )}
-          </div>
-        </>
+      {pool.isMember && <Chat poolId={id} active={pool.isActive} myId={myId} />}
+
+      {pool.isMember && open && (
+        <div className="mt-12 border-t border-line pt-6">
+          {pool.isCreator ? (
+            <button type="button" className="btn btn-outline" disabled={busy}
+              onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
+              Cancel pool
+            </button>
+          ) : (
+            <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
+              Leave pool
+            </button>
+          )}
+        </div>
       )}
     </>
   );
