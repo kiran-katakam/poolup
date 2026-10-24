@@ -16,6 +16,7 @@ export async function GET(request) {
     const now = new Date();
     const q = request.nextUrl.searchParams;
     const filter = { status: "open", departEnd: { $gt: now } };
+    if (user.gender !== "female") filter.womenOnly = { $ne: true };
     // Unknown from/to values are ignored rather than rejected.
     if (PLACE_IDS.includes(q.get("from"))) filter.from = q.get("from");
     if (PLACE_IDS.includes(q.get("to"))) filter.to = q.get("to");
@@ -52,6 +53,7 @@ export async function POST(request) {
     const { data, error } = parseBody(createPoolSchema(now), body);
     if (error) return fail(400, error);
 
+    if (data.womenOnly && user.gender !== "female") return fail(403, "Only women can create a women-only pool");
     if (await hasActivePool(user._id, now)) return fail(409, "You're already in an active pool");
     const { sharePhone, ...fields } = data;
     const created = await Pool.create({

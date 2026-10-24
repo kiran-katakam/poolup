@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { api, formatWindow } from "@/lib/client.js";
 import { Fare, Seats, seatsLeftText } from "@/app/components/PoolCard";
+import Chat from "@/app/components/Chat";
 
 function statusBadge(pool) {
   if (pool.status === "cancelled") return { text: "CANCELLED", className: "border-bad text-bad" };
@@ -86,9 +87,16 @@ function Pool() {
 
   return (
     <>
-      {badge && (
-        <p className={`mb-3 inline-block rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
-          {badge.text}
+      {(badge || pool.womenOnly) && (
+        <p className="mb-3 flex flex-wrap gap-2">
+          {badge && (
+            <span className={`rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
+              {badge.text}
+            </span>
+          )}
+          {pool.womenOnly && (
+            <span className="rounded border-2 border-ink px-2 py-0.5 font-display text-lg font-bold uppercase tracking-[0.06em]">Women only</span>
+          )}
         </p>
       )}
       <h1 className="font-display text-[34px] font-bold leading-[1.05] text-balance">
@@ -147,26 +155,28 @@ function Pool() {
       )}
 
       {pool.isMember && open && (
-        <>
-          <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
-            <input type="checkbox" checked={pool.iShared} disabled={busy}
-              onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
-            Share my WhatsApp number with this pool
-          </label>
+        <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
+          <input type="checkbox" checked={pool.iShared} disabled={busy}
+            onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
+          Share my WhatsApp number with this pool
+        </label>
+      )}
 
-          <div className="mt-12 border-t border-line pt-6">
-            {pool.isCreator ? (
-              <button type="button" className="btn btn-outline" disabled={busy}
-                onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
-                Cancel pool
-              </button>
-            ) : (
-              <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
-                Leave pool
-              </button>
-            )}
-          </div>
-        </>
+      {pool.isMember && <Chat poolId={id} active={pool.isActive} myId={myId} />}
+
+      {pool.isMember && open && (
+        <div className="mt-12 border-t border-line pt-6">
+          {pool.isCreator ? (
+            <button type="button" className="btn btn-outline" disabled={busy}
+              onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
+              Cancel pool
+            </button>
+          ) : (
+            <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
+              Leave pool
+            </button>
+          )}
+        </div>
       )}
     </>
   );

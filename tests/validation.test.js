@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   otpRequestSchema, registerSchema, loginSchema,
-  createPoolSchema, joinSchema, shareSchema, parseBody,
+  createPoolSchema, joinSchema, shareSchema, messageSchema, profileSchema, googleCompleteSchema, parseBody,
 } from "../lib/validation.js";
 
 const now = new Date("2026-10-24T10:00:00Z");
@@ -71,4 +71,33 @@ describe("join/share/parseBody", () => {
       expect(parseBody(registerSchema, d).error).toBeTypeOf("string");
     }
   });
+});
+
+describe("messageSchema", () => {
+  it("trims text", () => expect(parseBody(messageSchema, { text: "  hi  " }).data.text).toBe("hi"));
+  it("rejects blank text", () => expect(parseBody(messageSchema, { text: "   " }).error).toBe("Type a message"));
+  it("rejects over 500 chars", () =>
+    expect(parseBody(messageSchema, { text: "a".repeat(501) }).error).toBe("Messages can be 500 characters at most"));
+  it("accepts exactly 500", () => expect(parseBody(messageSchema, { text: "a".repeat(500) }).data).toBeTruthy());
+});
+
+describe("women-only schemas", () => {
+  it("profileSchema rejects unknown genders", () =>
+    expect(parseBody(profileSchema, { gender: "x" }).error).toBe("Pick an option from the list"));
+  it("createPoolSchema defaults womenOnly to false", () =>
+    expect(parseBody(schema, pool()).data.womenOnly).toBe(false));
+  it("profileSchema accepts the three genders", () => {
+    for (const gender of ["female", "male", "unspecified"]) expect(parseBody(profileSchema, { gender }).data.gender).toBe(gender);
+  });
+  it("createPoolSchema keeps womenOnly: true", () =>
+    expect(parseBody(schema, pool({ womenOnly: true })).data.womenOnly).toBe(true));
+});
+
+describe("googleCompleteSchema", () => {
+  it("rejects a 9-digit phone", () =>
+    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "987654321" }).error)
+      .toBe("Enter a 10-digit Indian mobile number"));
+  it("accepts a valid name and phone", () =>
+    expect(parseBody(googleCompleteSchema, { name: " Ravi ", phone: "9876543210" }).data)
+      .toEqual({ name: "Ravi", phone: "9876543210" }));
 });

@@ -16,9 +16,10 @@ function toLocalInput(date) {
 
 export default function NewPoolPage() {
   const router = useRouter();
-  const [form, setForm] = useState({ from: "campus", to: "", start: "", end: "", capacity: 4, fare: "400", share: true });
+  const [form, setForm] = useState({ from: "campus", to: "", start: "", end: "", capacity: 4, fare: "400", share: true, womenOnly: false });
   const [limits, setLimits] = useState({ min: "", max: "" }); // datetime-local min/max: now to 7 days ahead
   const [mine, setMine] = useState(null);
+  const [me, setMe] = useState(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -31,6 +32,7 @@ export default function NewPoolPage() {
       setForm((f) => ({ ...f, start: toLocalInput(start), end: toLocalInput(new Date(start.getTime() + HALF_HOUR)) }));
       setLimits({ min: toLocalInput(new Date()), max: toLocalInput(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)) });
     });
+    api("/api/auth/me").then((r) => r.ok && setMe(r.data.user)); // only to know whether to offer "Women only"
   }, [router]);
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
@@ -52,6 +54,7 @@ export default function NewPoolPage() {
         capacity: form.capacity,
         totalFare: Number(form.fare),
         sharePhone: form.share,
+        womenOnly: form.womenOnly,
       },
     });
     if (r.ok) return router.push(`/pools/${r.data.pool.id}`);
@@ -135,6 +138,13 @@ export default function NewPoolPage() {
           <input type="checkbox" checked={form.share} onChange={set("share")} className="size-5 shrink-0 accent-ink" />
           Share my WhatsApp number with this pool
         </label>
+
+        {me?.gender === "female" && (
+          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
+            <input type="checkbox" checked={form.womenOnly} onChange={set("womenOnly")} className="size-5 shrink-0 accent-ink" />
+            Women only (only women can see and join)
+          </label>
+        )}
 
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={busy}>{busy ? "Creating…" : "Create pool"}</button>

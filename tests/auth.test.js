@@ -4,6 +4,8 @@ import {
   hashSecret,
   verifySecret,
   signSession,
+  signGoogleSignup,
+  readGoogleSignup,
   readSession,
 } from "../lib/auth.js";
 
@@ -41,5 +43,22 @@ describe("sessions", () => {
     delete process.env.JWT_SECRET;
     await expect(signSession("abc")).rejects.toThrow("JWT_SECRET is not set");
     process.env.JWT_SECRET = saved;
+  });
+});
+
+describe("google signup token", () => {
+  it("round-trips email and name", async () =>
+    expect(await readGoogleSignup(await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" })))
+      .toEqual({ email: "a@vitap.ac.in", name: "A" }));
+  it("is not a session", async () =>
+    expect(await readSession(await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" }))).toBeNull());
+  it("a session is not a signup token", async () =>
+    expect(await readGoogleSignup(await signSession("507f1f77bcf86cd799439011"))).toBeNull());
+  it("a tampered token is rejected", async () => {
+    const t = await signGoogleSignup({ email: "a@vitap.ac.in", name: "A" });
+    // Not the last char: it carries base64url padding bits, so changing it can still decode the same.
+    const i = t.length - 5;
+    const bad = t.slice(0, i) + (t[i] === "A" ? "B" : "A") + t.slice(i + 1);
+    expect(await readGoogleSignup(bad)).toBeNull();
   });
 });

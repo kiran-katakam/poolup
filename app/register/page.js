@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/client.js";
+import GoogleButton from "@/app/components/GoogleButton";
 
 const label = "block text-[15px] font-semibold";
 const hint = "mt-1 block text-sm font-normal text-muted";
@@ -99,6 +100,8 @@ export default function RegisterPage() {
           <button type="submit" className="btn" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
         </form>
       )}
+
+      {step === 1 && <GoogleButton />}
 
       <p className="mt-5 text-[15px]">
         Already have an account? <Link href="/login" className="link">Log in</Link>

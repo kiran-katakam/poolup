@@ -6,6 +6,9 @@ import {
   visibleMembers,
   istDayRange,
   isActive,
+  chatBlockReason,
+  canSeePool,
+  googleAccountError,
 } from "../lib/rules.js";
 import { PLACES, PLACE_IDS, placeLabel } from "../lib/places.js";
 
@@ -103,4 +106,40 @@ describe("istDayRange", () => {
     expect(start.toISOString()).toBe("2026-10-23T18:30:00.000Z");
     expect(end.getTime() - start.getTime()).toBe(24 * 3600 * 1000);
   });
+});
+
+describe("chatBlockReason", () => {
+  it("lets a member of an active pool post", () => expect(chatBlockReason(openPool(), "u1", now)).toBeNull());
+  it("blocks non-members", () => expect(chatBlockReason(openPool(), "u9", now)).toBe("not_member"));
+  it("is read-only after a cancel", () => expect(chatBlockReason(openPool({ status: "cancelled" }), "u1", now)).toBe("ended"));
+  it("is read-only once departEnd has passed", () =>
+    expect(chatBlockReason(openPool({ departEnd: now }), "u1", now)).toBe("ended"));
+  it("checks membership before ended", () =>
+    expect(chatBlockReason(openPool({ status: "cancelled" }), "u9", now)).toBe("not_member"));
+});
+
+describe("canSeePool", () => {
+  it("shows open pools to everyone", () => expect(canSeePool(openPool(), { gender: undefined })).toBe(true));
+  it("shows women-only pools to women", () => expect(canSeePool(openPool({ womenOnly: true }), { gender: "female" })).toBe(true));
+  it("hides them from men", () => expect(canSeePool(openPool({ womenOnly: true }), { gender: "male" })).toBe(false));
+  it("hides them when gender is unset or unspecified", () => {
+    expect(canSeePool(openPool({ womenOnly: true }), {})).toBe(false);
+    expect(canSeePool(openPool({ womenOnly: true }), { gender: "unspecified" })).toBe(false);
+  });
+  it("shows a women-only pool to a male current member (plain ids)", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: ["u1"] }), { _id: "u1", gender: "male" })).toBe(true));
+  it("shows a women-only pool to a male current member (populated)", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: [{ _id: "u1" }] }), { _id: "u1", gender: "male" })).toBe(true));
+  it("still hides it from a male non-member", () =>
+    expect(canSeePool(openPool({ womenOnly: true, members: ["u1"] }), { _id: "u9", gender: "male" })).toBe(false));
+});
+
+describe("googleAccountError", () => {
+  it("accepts a verified college email", () =>
+    expect(googleAccountError({ email: "a@vitapstudent.ac.in", email_verified: true })).toBeNull());
+  it("rejects unverified", () =>
+    expect(googleAccountError({ email: "a@vitapstudent.ac.in", email_verified: false })).toBe("unverified"));
+  it("rejects other domains", () =>
+    expect(googleAccountError({ email: "a@gmail.com", email_verified: true })).toBe("not_college"));
+  it("rejects missing claims", () => expect(googleAccountError({})).toBe("unverified"));
 });
