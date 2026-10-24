@@ -36,7 +36,7 @@ export default function PoolsPage() {
   const setFilter = (key) => (e) => setFilters((f) => ({ ...f, [key]: e.target.value }));
 
   return (
-    <div className="pb-24 lg:pb-0">
+    <div>
       {/* On a laptop the heading and Create button sit on top; on a phone the button is fixed at the bottom. */}
       <div className="mb-5 hidden items-end justify-between gap-4 lg:flex">
         <h1 className="font-display text-[44px] font-bold leading-none">Pools leaving soon</h1>

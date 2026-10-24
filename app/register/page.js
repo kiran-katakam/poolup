@@ -107,6 +107,10 @@ export default function RegisterPage() {
               value={form.password} onChange={set("password")} />
           </label>
           {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
+          <p className="text-sm text-muted">
+            By creating an account you agree to the <Link href="/terms" className="link">Terms</Link> and{" "}
+            <Link href="/privacy" className="link">Privacy Policy</Link>.
+          </p>
           <button type="submit" className="btn" disabled={busy}>{busy ? "Creating…" : "Create account"}</button>
         </form>
       )}

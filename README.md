@@ -34,6 +34,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 ## Phase 4: Google sign-in
 
 - "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number, gender and password on a "Finish your profile" page, with no OTP. The password lets them log in by email too.
+- Terms of Service (`/terms`) and Privacy Policy (`/privacy`), linked in the footer and on both sign-up forms. The privacy page lists exactly what is stored, who sees it, the cookies, and the services used.
 
 ## Try it (2 minutes)
 

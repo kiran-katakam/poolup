@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Suspense } from "react";
 import { Barlow_Condensed, Roboto_Mono } from "next/font/google";
 import Nav from "@/app/components/Nav";
@@ -20,6 +21,11 @@ export default function RootLayout({ children }) {
           <Nav />
         </Suspense>
         <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-10">{children}</main>
+        {/* Extra bottom padding on phones clears the fixed "Create a pool" button on /pools. */}
+        <footer className="mx-auto flex w-full max-w-6xl gap-4 px-4 pt-4 pb-28 text-sm text-muted sm:px-6 lg:pb-8">
+          <Link href="/terms" className="underline underline-offset-4 hover:text-ink">Terms</Link>
+          <Link href="/privacy" className="underline underline-offset-4 hover:text-ink">Privacy</Link>
+        </footer>
       </body>
     </html>
   );
