@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
-  const [form, setForm] = useState({ otp: "", name: "", phone: "", password: "" });
+  const [form, setForm] = useState({ otp: "", name: "", phone: "", gender: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -89,6 +89,16 @@ export default function RegisterPage() {
             <span className={hint}>10 digits. Only shown to people in your pool, and only if you choose.</span>
             <input className="field font-mono font-medium" type="tel" inputMode="numeric" autoComplete="tel"
               value={form.phone} onChange={set("phone")} placeholder="98765 43210" />
+          </label>
+          <label className={label}>
+            Gender
+            <span className={hint}>Decides who can see women-only pools. You can&apos;t change it later.</span>
+            <select className="field font-normal" value={form.gender} onChange={set("gender")}>
+              <option value="" disabled>Choose…</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="unspecified">Prefer not to say</option>
+            </select>
           </label>
           <label className={label}>
             Password

@@ -12,7 +12,7 @@ export default function FinishProfilePage() {
   const router = useRouter();
   const [email, setEmail] = useState(""); // "" = loading
   const [expired, setExpired] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "" });
+  const [form, setForm] = useState({ name: "", phone: "", gender: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -70,6 +70,16 @@ export default function FinishProfilePage() {
           <span className={hint}>10 digits. Only shown to people in your pool, and only if you choose.</span>
           <input className="field font-mono font-medium" type="tel" inputMode="numeric" autoComplete="tel"
             value={form.phone} onChange={set("phone")} placeholder="98765 43210" />
+        </label>
+        <label className={label}>
+          Gender
+          <span className={hint}>Decides who can see women-only pools. You can&apos;t change it later.</span>
+          <select className="field font-normal" value={form.gender} onChange={set("gender")}>
+            <option value="" disabled>Choose…</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="unspecified">Prefer not to say</option>
+          </select>
         </label>
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={!email || busy}>{busy ? "Creating…" : "Create account"}</button>
