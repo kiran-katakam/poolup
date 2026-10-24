@@ -38,7 +38,7 @@ export async function POST(request) {
     }
 
     try {
-      await sendOtp(data.email, code);
+      await sendOtp(data.email, code, data.purpose);
     } catch (e) {
       console.error(e);
       // Delete so the failed send doesn't block a retry with the 60s wait.
