@@ -36,7 +36,7 @@ Built for the one problem of a remote campus: everyone in it is a verified VIT-A
 ## Capabilities and Constraints
 
 - **Phase 1 (submission):** register with a college email plus a one-time OTP, then log in with a password. Create, browse, join, leave and cancel pools. One active pool per student. Pools have from, to, a time window of up to 3 h, capacity 2–5 and an estimated total fare (default ₹400). Sharing your WhatsApp number with a pool is opt-in (default on, can be turned off), and members see only shared numbers.
-- **Places (fixed):** VIT-AP Campus, Vijayawada Bus Stand, Vijayawada Railway Station, Gannavaram Airport, PVP Square, Trendset Mall. Any place can be the start or the end.
+- **Places (fixed):** VIT-AP Campus, Vijayawada Bus Stand, Vijayawada Railway Station, Gannavaram Airport, PVP Square, Trendset Mall. Every pool starts or ends at VIT-AP Campus; the other end is one of the five city places.
 - **Later phases**, each independent: 2 live chat, 3 women-only pools, 4 Google sign-in, 5 match alerts, 6 auto queue.
 - **Terminology:** "pool" (not ride or trip), "seats left", "₹X each".
 - **Deadline:** 26 Oct 2026, 11 AM IST. The live URL must stay up until about 5 Nov 2026.
