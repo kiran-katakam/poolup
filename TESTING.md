@@ -6,13 +6,14 @@
 npm test      # vitest run
 ```
 
-Last run: 4 files, 90 tests, all passing.
+Last run: 5 files, 93 tests, all passing.
 
 | File | What it checks |
 |---|---|
 | `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only; `canSeePool` shows women-only pools only to women (not to men, unset or "prefer not to say") but also to its current members; `googleAccountError` refuses an unverified Google email and a non-college one; the nickname is the email part before the dot, capitalized and at most 20 characters, and the shown name prefers a saved nickname, then the email, then the full name; pool members are listed by nickname. |
 | `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, rejects a route with neither end at campus (railway to airport) and accepts railway to campus, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most; register and the Google finish-profile form need a gender from the three options; the finish-profile form trims the name and rejects a bad phone; the account form edits name and phone and drops any gender sent to it; the Google form needs a password of 8 or more (missing gives the same message); a code request defaults to register and accepts only register or reset; a reset lowercases the email and rejects a short password or a bad code. |
 | `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing; the Google signup token round-trips email and name, is not accepted as a session, a session token is not accepted as a signup token, and a tampered token is rejected. |
+| `tests/mail.test.js` | The code email puts the code in the subject, text and HTML; a reset email has its own subject and heading; sign-up wording is the default. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
 
 The database routes and the UI are not unit tested. They are covered by the manual plan below.
