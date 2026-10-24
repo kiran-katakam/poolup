@@ -3,7 +3,7 @@ import { fail, isValidId } from "@/lib/http.js";
 import { getUser, unauthorized } from "@/lib/auth.js";
 import { chatBlockReason, canSeePool } from "@/lib/rules.js";
 import { messageSchema, parseBody } from "@/lib/validation.js";
-import { toMessageJSON } from "@/lib/pools.js";
+import { toMessageJSON, AUTHOR_FIELDS } from "@/lib/pools.js";
 import Pool from "@/lib/models/Pool.js";
 import Message from "@/lib/models/Message.js";
 
@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
       return fail(403, "Only pool members can see this chat");
     }
 
-    const latest = await Message.find({ pool: id }).sort({ createdAt: -1 }).limit(100).populate("author", "name");
+    const latest = await Message.find({ pool: id }).sort({ createdAt: -1 }).limit(100).populate("author", AUTHOR_FIELDS);
     return NextResponse.json({ messages: latest.reverse().map(toMessageJSON) });
   } catch (e) {
     console.error(e);
@@ -54,7 +54,7 @@ export async function POST(request, { params }) {
       text: data.text,
       expiresAt: new Date(pool.departEnd.getTime() + DAY_MS),
     });
-    await message.populate("author", "name");
+    await message.populate("author", AUTHOR_FIELDS);
     return NextResponse.json({ message: toMessageJSON(message) }, { status: 201 });
   } catch (e) {
     console.error(e);

@@ -126,11 +126,15 @@ describe("password reset schemas", () => {
 });
 
 describe("accountSchema", () => {
-  it("trims the name and keeps the phone", () =>
-    expect(parseBody(accountSchema, { name: " Ravi ", phone: "9876543210" }).data)
-      .toEqual({ name: "Ravi", phone: "9876543210" }));
+  it("trims the name and nickname and keeps the phone", () =>
+    expect(parseBody(accountSchema, { name: " Ravi ", nickname: " RV ", phone: "9876543210" }).data)
+      .toEqual({ name: "Ravi", nickname: "RV", phone: "9876543210" }));
+  it("rejects a nickname under 2 or over 20 characters", () => {
+    expect(parseBody(accountSchema, { name: "Ravi", nickname: "R", phone: "9876543210" }).error).toBe("Nickname needs at least 2 characters");
+    expect(parseBody(accountSchema, { name: "Ravi", nickname: "R".repeat(21), phone: "9876543210" }).error).toBe("Nickname can be 20 characters at most");
+  });
   it("drops gender, so it can't be changed after sign-up", () =>
-    expect(parseBody(accountSchema, { name: "Ravi", phone: "9876543210", gender: "female" }).data.gender).toBeUndefined());
+    expect(parseBody(accountSchema, { name: "Ravi", nickname: "RV", phone: "9876543210", gender: "female" }).data.gender).toBeUndefined());
   it("rejects a bad phone", () =>
-    expect(parseBody(accountSchema, { name: "Ravi", phone: "12345" }).error).toBe("Enter a 10-digit Indian mobile number"));
+    expect(parseBody(accountSchema, { name: "Ravi", nickname: "RV", phone: "12345" }).error).toBe("Enter a 10-digit Indian mobile number"));
 });

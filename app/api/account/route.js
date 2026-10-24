@@ -13,7 +13,7 @@ export async function POST(request) {
     const { data, error } = parseBody(accountSchema, body);
     if (error) return fail(400, error);
 
-    const updated = await User.findByIdAndUpdate(user._id, { name: data.name, phone: data.phone }, { returnDocument: "after" });
+    const updated = await User.findByIdAndUpdate(user._id, { name: data.name, nickname: data.nickname, phone: data.phone }, { returnDocument: "after" });
     return NextResponse.json({ user: updated });
   } catch (e) {
     console.error(e);
