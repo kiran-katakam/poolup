@@ -113,6 +113,10 @@ Import the repo, add the variables above (eight with Google sign-in), and deploy
 - Phase 5: match alerts by email
 - Phase 6: auto queue for drivers and an admin
 
+## Architecture
+
+[`ARCHITECTURE.md`](ARCHITECTURE.md) covers how the app works end to end (request flow, data model, API), what every file does, and the full decision log.
+
 ## Testing
 
 See `TESTING.md`. The write-up for the submission is `WRITEUP.md`.
