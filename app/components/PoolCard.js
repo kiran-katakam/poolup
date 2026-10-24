@@ -39,7 +39,7 @@ export function seatsLeftText(pool) {
 
 export default function PoolCard({ pool }) {
   // Members are stored in join order, so the first one is whoever made the pool.
-  const creator = pool.members[0]?.name.split(" ")[0];
+  const creator = pool.members[0]?.name;
   return (
     <Link href={`/pools/${pool.id}`}
       className="grid h-full grid-cols-[1fr_112px] overflow-hidden rounded-[10px] border border-line bg-white hover:border-ink">

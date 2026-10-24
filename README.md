@@ -28,7 +28,8 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 - Pick your gender once when you sign up (OTP or Google); it can't be changed later. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
 - There are four demo accounts: `demo2` and `demo4` are female (use them to try women-only pools), `demo1` and `demo3` are male.
-- The Account page (top right) lets you edit your name and WhatsApp number, shows your email and gender read-only, and has the Log out button.
+- Other students see your nickname, not your full name. It starts as the part of your email before the dot (`kiran.23bce7123@…` shows as "Kiran").
+- The Account page (top right) lets you edit your nickname, full name and WhatsApp number, shows your email and gender read-only, and has the Log out button.
 
 ## Phase 4: Google sign-in
 

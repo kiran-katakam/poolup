@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client.js";
+import { displayName } from "@/lib/rules.js";
 
 const label = "block text-[15px] font-semibold";
 const hint = "mt-1 block text-sm font-normal text-muted";
@@ -12,7 +13,7 @@ const GENDERS = { female: "Female", male: "Male", unspecified: "Prefer not to sa
 export default function AccountPage() {
   const router = useRouter();
   const [user, setUser] = useState(null); // null = loading
-  const [form, setForm] = useState({ name: "", phone: "" });
+  const [form, setForm] = useState({ name: "", nickname: "", phone: "" });
   const [status, setStatus] = useState(""); // "", "saving", "saved"
   const [error, setError] = useState("");
 
@@ -23,7 +24,7 @@ export default function AccountPage() {
       if (r.status === 401) return router.replace("/login");
       if (!r.ok) return setError(r.data.error || "Couldn't load your account, try again");
       setUser(r.data.user);
-      setForm({ name: r.data.user.name, phone: r.data.user.phone });
+      setForm({ name: r.data.user.name, nickname: displayName(r.data.user), phone: r.data.user.phone });
     });
   }, [router]);
 
@@ -36,7 +37,7 @@ export default function AccountPage() {
     const r = await api("/api/account", { method: "POST", body: { ...form, phone } });
     if (r.status === 401) return router.replace("/login");
     if (r.ok) {
-      setForm({ name: r.data.user.name, phone: r.data.user.phone });
+      setForm({ name: r.data.user.name, nickname: displayName(r.data.user), phone: r.data.user.phone });
       return setStatus("saved");
     }
     setError(r.data.error || "Couldn't save, try again");
@@ -64,8 +65,12 @@ export default function AccountPage() {
 
       <form onSubmit={save} noValidate className="mt-5 flex flex-col gap-4">
         <label className={label}>
-          Your name
-          <span className={hint}>Pool members see this.</span>
+          Nickname
+          <span className={hint}>What other students see in pools and chat. It starts as the name in your email.</span>
+          <input className="field font-normal" autoComplete="nickname" maxLength={20} value={form.nickname} onChange={set("nickname")} disabled={!user} />
+        </label>
+        <label className={label}>
+          Full name
           <input className="field font-normal" autoComplete="name" value={form.name} onChange={set("name")} disabled={!user} />
         </label>
         <label className={label}>

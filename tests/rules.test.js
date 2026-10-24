@@ -9,6 +9,8 @@ import {
   chatBlockReason,
   canSeePool,
   googleAccountError,
+  nicknameFromEmail,
+  displayName,
 } from "../lib/rules.js";
 import { PLACES, PLACE_IDS, placeLabel } from "../lib/places.js";
 
@@ -79,6 +81,21 @@ describe("joinBlockReason", () => {
   });
 });
 
+describe("nicknames", () => {
+  it("takes the part before the dot and capitalizes it", () =>
+    expect(nicknameFromEmail("kiran.23bce7123@vitapstudent.ac.in")).toBe("Kiran"));
+  it("uses the whole local part when there is no dot", () =>
+    expect(nicknameFromEmail("demo1@vitapstudent.ac.in")).toBe("Demo1"));
+  it("caps it at 20 characters", () =>
+    expect(nicknameFromEmail(`${"a".repeat(30)}.1@vitap.ac.in`)).toHaveLength(20));
+  it("display name prefers the saved nickname", () =>
+    expect(displayName({ nickname: "KK", email: "kiran.1@vitap.ac.in", name: "Kiran Kumar" })).toBe("KK"));
+  it("falls back to the email, then the full name", () => {
+    expect(displayName({ email: "kiran.1@vitap.ac.in", name: "Kiran Kumar" })).toBe("Kiran");
+    expect(displayName({ name: "Kiran Kumar" })).toBe("Kiran Kumar");
+  });
+});
+
 describe("visibleMembers", () => {
   const pool = openPool({
     members: [
@@ -92,6 +109,9 @@ describe("visibleMembers", () => {
     expect(out).toEqual([{ id: "u1", name: "A" }, { id: "u2", name: "B" }]);
     out.forEach((m) => expect("phone" in m).toBe(false));
   });
+  it("shows nicknames, not full names", () =>
+    expect(visibleMembers(openPool({ members: [{ _id: "u1", name: "Kiran Kumar", nickname: "KK" }] }), "u9"))
+      .toEqual([{ id: "u1", name: "KK" }]));
   it("shows only shared phones to members", () => {
     expect(visibleMembers(pool, "u1")).toEqual([
       { id: "u1", name: "A" },
