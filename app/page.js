@@ -99,8 +99,8 @@ export default function Home() {
       </section>
 
       <section aria-labelledby="places-heading">
-        <h2 id="places-heading" className="font-display text-[34px] font-bold leading-none lg:text-[44px]">Six places, both ways</h2>
-        <p className="mt-3 text-[15px] text-muted">Any place can be the start or the end, so getting back to campus works too.</p>
+        <h2 id="places-heading" className="font-display text-[34px] font-bold leading-none lg:text-[44px]">To campus or from campus</h2>
+        <p className="mt-3 text-[15px] text-muted">Every pool starts or ends at VIT-AP Campus, so heading out and getting back both work.</p>
         <ul className="mt-5 flex flex-wrap gap-2">
           {PLACES.map((p) => (
             <li key={p.id} className="rounded-lg border-2 border-ink bg-white px-3 py-1.5 font-display text-lg font-bold">{p.label}</li>

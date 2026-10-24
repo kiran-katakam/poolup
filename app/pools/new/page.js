@@ -35,6 +35,12 @@ export default function NewPoolPage() {
     api("/api/auth/me").then((r) => r.ok && setMe(r.data.user)); // only to know whether to offer "Women only"
   }, [router]);
 
+  // One end is always campus: a city From forces To to campus, and campus From offers only city places.
+  const setFrom = (e) => {
+    const from = e.target.value;
+    setForm((f) => ({ ...f, from, to: from !== "campus" ? "campus" : f.to === "campus" ? "" : f.to }));
+  };
+  const toPlaces = PLACES.filter((p) => (form.from === "campus" ? p.id !== "campus" : p.id === "campus"));
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.type === "checkbox" ? e.target.checked : e.target.value }));
 
   async function submit(e) {
@@ -84,15 +90,15 @@ export default function NewPoolPage() {
         <div className="grid grid-cols-2 gap-3">
           <label className={label}>
             From
-            <select className="field font-normal" value={form.from} onChange={set("from")}>
+            <select className="field select-chevron pr-8 font-normal" value={form.from} onChange={setFrom}>
               {PLACES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
             </select>
           </label>
           <label className={label}>
             To
-            <select className="field font-normal" value={form.to} onChange={set("to")}>
+            <select className="field select-chevron pr-8 font-normal" value={form.to} onChange={set("to")}>
               <option value="" disabled>Pick a place</option>
-              {PLACES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+              {toPlaces.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
             </select>
           </label>
         </div>
