@@ -26,12 +26,13 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## Phase 3: women-only pools
 
-- Set your gender on the Profile page. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
+- Pick your gender once when you sign up (OTP or Google); it can't be changed later. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
 - `demo2@vitapstudent.ac.in` is the female demo account, so use it to try women-only pools. `demo1` and `demo3` have no gender set.
+- The Account page (top right) lets you edit your name and WhatsApp number, shows your email and gender read-only, and has the Log out button.
 
 ## Phase 4: Google sign-in
 
-- "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number on a "Finish your profile" page, with no OTP and no password.
+- "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number and gender on a "Finish your profile" page, with no OTP and no password.
 
 ## Try it (2 minutes)
 
@@ -100,7 +101,7 @@ Import the repo, add the variables above (eight with Google sign-in), and deploy
 - No rate limit on chat messages.
 - Pools and their chat messages are deleted 1 day after the departure window ends.
 - Gender is self-declared, with no verification.
-- Changing your gender later doesn't remove you from a women-only pool you already joined.
+- Gender can't be changed after sign-up. Accounts made before this rule (like `demo1` and `demo3`) show "Not set" and count as not female.
 - Reviewers can't try Google sign-in without a college Google account; it is shown in the demo video instead.
 - A student who signed up with Google has no password and can't set one later, so they can only log in with Google.
 - Not built yet: match alerts, auto queue.
