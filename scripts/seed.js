@@ -8,21 +8,23 @@ import Pool from "../lib/models/Pool.js";
 const password = process.env.DEMO_PASSWORD;
 if (!password) throw new Error("DEMO_PASSWORD is not set");
 
-// Reviewer accounts: they start in no pool, so demo1 can create and demo2 can join.
+// Reviewer accounts, 2 female and 2 male (women-only pools need a female one). They start in no pool.
+// Keep in sync with DEMO_ACCOUNTS in app/login/page.js.
 const demos = [
-  { email: "demo1@vitapstudent.ac.in", name: "Aarav Demo", phone: "9000000001" },
+  { email: "demo1@vitapstudent.ac.in", name: "Aarav Demo", phone: "9000000001", gender: "male" },
   { email: "demo2@vitapstudent.ac.in", name: "Diya Demo", phone: "9000000002", gender: "female" },
-  { email: "demo3@vitapstudent.ac.in", name: "Rohan Demo", phone: "9000000003" },
+  { email: "demo3@vitapstudent.ac.in", name: "Rohan Demo", phone: "9000000003", gender: "male" },
+  { email: "demo4@vitapstudent.ac.in", name: "Ananya Demo", phone: "9000000004", gender: "female" },
 ];
 
 // Seed-only members fill the listed pools. .invalid is a reserved domain, so no real inbox exists.
 const seeds = [
-  { email: "seed1@poolup.invalid", name: "Sneha (demo)", phone: "9000000011" },
-  { email: "seed2@poolup.invalid", name: "Teja (demo)", phone: "9000000012" },
-  { email: "seed3@poolup.invalid", name: "Meghana (demo)", phone: "9000000013" },
-  { email: "seed4@poolup.invalid", name: "Rohan (demo)", phone: "9000000014" },
-  { email: "seed5@poolup.invalid", name: "Kiran (demo)", phone: "9000000015" },
-  { email: "seed6@poolup.invalid", name: "Arjun (demo)", phone: "9000000016" },
+  { email: "seed1@poolup.invalid", name: "Sneha (demo)", phone: "9000000011", gender: "female" },
+  { email: "seed2@poolup.invalid", name: "Teja (demo)", phone: "9000000012", gender: "male" },
+  { email: "seed3@poolup.invalid", name: "Meghana (demo)", phone: "9000000013", gender: "female" },
+  { email: "seed4@poolup.invalid", name: "Rohan (demo)", phone: "9000000014", gender: "male" },
+  { email: "seed5@poolup.invalid", name: "Kiran (demo)", phone: "9000000015", gender: "male" },
+  { email: "seed6@poolup.invalid", name: "Arjun (demo)", phone: "9000000016", gender: "male" },
   { email: "seed7@poolup.invalid", name: "Priya (demo)", phone: "9000000017", gender: "female" },
 ];
 
