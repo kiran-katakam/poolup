@@ -49,7 +49,7 @@ export default function AccountPage() {
   }
 
   return (
-    <>
+    <div className="mx-auto max-w-md">
       <h1 className="font-display text-[34px] font-bold leading-none">Your account</h1>
 
       <div className="card mt-5">
@@ -85,6 +85,6 @@ export default function AccountPage() {
         <Link href="/forgot-password" className="link inline-flex min-h-11 items-center text-[15px]">Change password</Link>
         <button type="button" onClick={logOut} className="link min-h-11 cursor-pointer text-[15px]">Log out</button>
       </div>
-    </>
+    </div>
   );
 }

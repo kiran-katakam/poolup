@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
         <Suspense fallback={<header><div className="h-16 bg-yellow" /><div className="h-2.5 bg-ink" /></header>}>
           <Nav />
         </Suspense>
-        <main className="mx-auto w-full max-w-[480px] px-4 py-6">{children}</main>
+        <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:py-10">{children}</main>
       </body>
     </html>
   );

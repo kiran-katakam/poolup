@@ -46,7 +46,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <>
+    <div className="mx-auto max-w-md">
       <h1 className="font-display text-[34px] font-bold leading-none">Reset password</h1>
 
       {step === 1 ? (
@@ -91,6 +91,6 @@ export default function ForgotPasswordPage() {
       <p className="mt-5 text-[15px]">
         Remembered it? <Link href="/login" className="link">Log in</Link>
       </p>
-    </>
+    </div>
   );
 }

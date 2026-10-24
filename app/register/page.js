@@ -48,7 +48,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <>
+    <div className="mx-auto max-w-md">
       <h1 className="font-display text-[34px] font-bold leading-none">Create account</h1>
 
       {step === 1 ? (
@@ -93,7 +93,7 @@ export default function RegisterPage() {
           <label className={label}>
             Gender
             <span className={hint}>Decides who can see women-only pools. You can&apos;t change it later.</span>
-            <select className="field font-normal" value={form.gender} onChange={set("gender")}>
+            <select className="field select-chevron font-normal" value={form.gender} onChange={set("gender")}>
               <option value="" disabled>Choose…</option>
               <option value="female">Female</option>
               <option value="male">Male</option>
@@ -116,6 +116,6 @@ export default function RegisterPage() {
       <p className="mt-5 text-[15px]">
         Already have an account? <Link href="/login" className="link">Log in</Link>
       </p>
-    </>
+    </div>
   );
 }

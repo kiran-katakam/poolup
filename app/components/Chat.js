@@ -63,10 +63,10 @@ export default function Chat({ poolId, active, myId }) {
   if (hidden) return null;
 
   return (
-    <section aria-labelledby="chat-heading" className="mt-8">
+    <section aria-labelledby="chat-heading" className="mt-8 lg:sticky lg:top-6 lg:mt-0">
       <h2 id="chat-heading" className="font-display text-2xl font-bold">Pool chat</h2>
       <ol ref={listRef} aria-live="polite"
-        className="mt-2 flex max-h-[360px] flex-col gap-2 overflow-y-auto rounded-[10px] border border-line bg-white p-3">
+        className="mt-2 flex max-h-[360px] flex-col lg:max-h-[60vh] gap-2 overflow-y-auto rounded-[10px] border border-line bg-white p-3">
         {messages.length === 0 && (
           <li className="py-6 text-center text-[15px] text-muted">No messages yet. Say hi and sort out where to meet.</li>
         )}
