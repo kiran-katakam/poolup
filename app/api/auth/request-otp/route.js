@@ -17,7 +17,9 @@ export async function POST(request) {
 
   try {
     await connectDB();
-    if (await User.exists({ email: data.email })) return fail(409, "You already have an account. Log in instead.");
+    const exists = await User.exists({ email: data.email });
+    if (data.purpose === "register" && exists) return fail(409, "You already have an account. Log in instead.");
+    if (data.purpose === "reset" && !exists) return fail(404, "No account with this email. Create one instead.");
 
     const now = Date.now();
     const code = generateOtp();

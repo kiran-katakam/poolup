@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/db.js";
 import { fail } from "@/lib/http.js";
 import { googleCompleteSchema, parseBody } from "@/lib/validation.js";
 import { normalizeEmail } from "@/lib/rules.js";
-import { readGoogleSignup, clearGoogleSignupCookie, signSession, setSessionCookie } from "@/lib/auth.js";
+import { readGoogleSignup, clearGoogleSignupCookie, signSession, setSessionCookie, hashSecret } from "@/lib/auth.js";
 import User from "@/lib/models/User.js";
 
 export async function POST(request) {
@@ -19,8 +19,14 @@ export async function POST(request) {
     await connectDB();
     let user;
     try {
-      // Email comes only from the signed cookie (Google verified it); no passwordHash for Google accounts.
-      user = await User.create({ email: normalizeEmail(signup.email), name: data.name, phone: data.phone, gender: data.gender });
+      // Email comes only from the signed cookie (Google verified it). The password lets them log in by email later too.
+      user = await User.create({
+        email: normalizeEmail(signup.email),
+        name: data.name,
+        phone: data.phone,
+        gender: data.gender,
+        passwordHash: await hashSecret(data.password),
+      });
     } catch (e) {
       if (e.code === 11000) return fail(409, "You already have an account. Log in instead.");
       throw e;

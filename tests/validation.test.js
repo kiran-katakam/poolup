@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   otpRequestSchema, registerSchema, loginSchema,
-  createPoolSchema, joinSchema, shareSchema, messageSchema, accountSchema, googleCompleteSchema, parseBody,
+  createPoolSchema, joinSchema, shareSchema, messageSchema, accountSchema, googleCompleteSchema, resetPasswordSchema, parseBody,
 } from "../lib/validation.js";
 
 const now = new Date("2026-10-24T10:00:00Z");
@@ -96,14 +96,33 @@ describe("women-only schemas", () => {
 });
 
 describe("googleCompleteSchema", () => {
+  const g = { name: " Ravi ", phone: "9876543210", gender: "male", password: "password1" };
   it("rejects a 9-digit phone", () =>
-    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "987654321", gender: "male" }).error)
-      .toBe("Enter a 10-digit Indian mobile number"));
+    expect(parseBody(googleCompleteSchema, { ...g, phone: "987654321" }).error).toBe("Enter a 10-digit Indian mobile number"));
   it("needs a gender", () =>
-    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "9876543210" }).error).toBe("Pick your gender"));
-  it("accepts a valid name, phone and gender", () =>
-    expect(parseBody(googleCompleteSchema, { name: " Ravi ", phone: "9876543210", gender: "male" }).data)
-      .toEqual({ name: "Ravi", phone: "9876543210", gender: "male" }));
+    expect(parseBody(googleCompleteSchema, { ...g, gender: undefined }).error).toBe("Pick your gender"));
+  it("needs a password of 8 or more", () =>
+    expect(parseBody(googleCompleteSchema, { ...g, password: "short" }).error).toBe("Password needs at least 8 characters"));
+  it("a missing password gets the same message", () =>
+    expect(parseBody(googleCompleteSchema, { ...g, password: undefined }).error).toBe("Password needs at least 8 characters"));
+  it("accepts a valid name, phone, gender and password", () =>
+    expect(parseBody(googleCompleteSchema, g).data).toEqual({ ...g, name: "Ravi" }));
+});
+
+describe("password reset schemas", () => {
+  const r = { email: " Demo1@VITAPSTUDENT.ac.in ", otp: "123456", password: "password1" };
+  it("code request defaults to register", () =>
+    expect(parseBody(otpRequestSchema, { email: "a@vitapstudent.ac.in" }).data.purpose).toBe("register"));
+  it("code request accepts reset and rejects anything else", () => {
+    expect(parseBody(otpRequestSchema, { email: "a@vitapstudent.ac.in", purpose: "reset" }).data.purpose).toBe("reset");
+    expect(parseBody(otpRequestSchema, { email: "a@vitapstudent.ac.in", purpose: "x" }).error).toBeTypeOf("string");
+  });
+  it("reset lowercases the email", () =>
+    expect(parseBody(resetPasswordSchema, r).data.email).toBe("demo1@vitapstudent.ac.in"));
+  it("reset rejects a short password and a bad code", () => {
+    expect(parseBody(resetPasswordSchema, { ...r, password: "short" }).error).toBe("Password needs at least 8 characters");
+    expect(parseBody(resetPasswordSchema, { ...r, otp: "12" }).error).toBe("Code is 6 digits");
+  });
 });
 
 describe("accountSchema", () => {

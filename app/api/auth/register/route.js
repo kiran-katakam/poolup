@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db.js";
 import { fail } from "@/lib/http.js";
 import { registerSchema, parseBody } from "@/lib/validation.js";
-import { hashSecret, verifySecret, signSession, setSessionCookie } from "@/lib/auth.js";
+import { hashSecret, signSession, setSessionCookie } from "@/lib/auth.js";
+import { checkOtp } from "@/lib/otp.js";
 import User from "@/lib/models/User.js";
 import Otp from "@/lib/models/Otp.js";
-
-const MAX_ATTEMPTS = 5;
 
 export async function POST(request) {
   const body = await request.json().catch(() => null);
@@ -15,18 +14,8 @@ export async function POST(request) {
 
   try {
     await connectDB();
-    // Claim an attempt before comparing, so parallel guesses can't exceed the limit.
-    const otp = await Otp.findOneAndUpdate(
-      { email: data.email, expiresAt: { $gt: new Date() }, attempts: { $lt: MAX_ATTEMPTS } },
-      { $inc: { attempts: 1 } },
-      { returnDocument: "after" },
-    );
-    if (!otp) return fail(400, "Code expired, request a new one");
-
-    if (!(await verifySecret(data.otp, otp.codeHash))) {
-      if (otp.attempts >= MAX_ATTEMPTS) await Otp.deleteOne({ _id: otp._id });
-      return fail(400, "Wrong code");
-    }
+    const { otp, error: otpError } = await checkOtp(data.email, data.otp);
+    if (otpError) return fail(400, otpError);
 
     let user;
     try {
