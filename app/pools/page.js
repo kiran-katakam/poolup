@@ -36,12 +36,17 @@ export default function PoolsPage() {
   const setFilter = (key) => (e) => setFilters((f) => ({ ...f, [key]: e.target.value }));
 
   return (
-    <div className="pb-24">
-      <h1 className="sr-only">Pools</h1>
+    <div className="pb-24 lg:pb-0">
+      {/* On a laptop the heading and Create button sit on top; on a phone the button is fixed at the bottom. */}
+      <div className="mb-5 hidden items-end justify-between gap-4 lg:flex">
+        <h1 className="font-display text-[44px] font-bold leading-none">Pools leaving soon</h1>
+        <Link href="/pools/new" className="btn w-auto px-6">+ Create a pool</Link>
+      </div>
+      <h1 className="sr-only lg:hidden">Pools</h1>
 
       {mine && (
         <Link href={`/pools/${mine.id}`}
-          className="mb-4 flex min-h-11 items-center justify-between gap-3 rounded-lg bg-ink px-3 py-2 text-white">
+          className="mb-4 flex min-h-11 items-center justify-between gap-3 rounded-lg bg-ink px-3 py-2 text-white lg:px-5 lg:py-3">
           <span className="flex min-w-0 flex-col">
             <span className="font-display text-lg font-bold">
               <span className="tracking-[0.04em] text-yellow">YOUR POOL</span> {placeShort(mine.from)} <span aria-hidden="true">→</span><span className="sr-only">to</span> {placeShort(mine.to)}
@@ -52,7 +57,7 @@ export default function PoolsPage() {
         </Link>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 lg:max-w-2xl">
         <select aria-label="From" className={filterSelect} value={filters.from} onChange={setFilter("from")}>
           <option value="">From: Any</option>
           {PLACES.map((p) => <option key={p.id} value={p.id}>From: {p.short}</option>)}
@@ -70,7 +75,7 @@ export default function PoolsPage() {
       {error && <p role="alert" className="mt-4 font-semibold text-bad">{error}</p>}
 
       {pools === null ? (
-        <div aria-busy="true" className="mt-3 flex flex-col gap-2.5">
+        <div aria-busy="true" className="mt-3 grid gap-2.5 md:grid-cols-2 lg:gap-4 xl:grid-cols-3">
           <span className="sr-only">Loading pools</span>
           {[0, 1, 2].map((i) => (
             <div key={i} className="grid h-[136px] grid-cols-[1fr_112px] overflow-hidden rounded-[10px] border border-line bg-white">
@@ -79,7 +84,7 @@ export default function PoolsPage() {
           ))}
         </div>
       ) : pools.length > 0 ? (
-        <ul className="mt-3 flex flex-col gap-2.5">
+        <ul className="mt-3 grid gap-2.5 md:grid-cols-2 lg:mt-4 lg:gap-4 xl:grid-cols-3">
           {pools.map((p) => <li key={p.id}><PoolCard pool={p} /></li>)}
         </ul>
       ) : (
@@ -93,7 +98,7 @@ export default function PoolsPage() {
         )
       )}
 
-      <div className="fixed inset-x-0 bottom-0 bg-gradient-to-t from-ground from-60% to-transparent pt-4 pb-5">
+      <div className="fixed inset-x-0 bottom-0 bg-gradient-to-t from-ground from-60% to-transparent pt-4 pb-5 lg:hidden">
         <div className="mx-auto max-w-[480px] px-4">
           <Link href="/pools/new" className="btn h-[52px]">+ Create a pool</Link>
         </div>

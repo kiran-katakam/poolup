@@ -42,16 +42,16 @@ export default function FinishProfilePage() {
 
   if (expired) {
     return (
-      <>
+      <div className="mx-auto max-w-md">
         <h1 className="font-display text-[34px] font-bold leading-none">Sign in again</h1>
         <p className="mt-3 text-[15px]">Your Google sign-in timed out or didn&apos;t finish.</p>
         <p className="mt-4 text-[15px]"><Link href="/login" className="link">Back to log in</Link></p>
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="mx-auto max-w-md">
       <h1 className="font-display text-[34px] font-bold leading-none">Finish your profile</h1>
 
       <form onSubmit={submit} noValidate className="mt-5 flex flex-col gap-4">
@@ -74,7 +74,7 @@ export default function FinishProfilePage() {
         <label className={label}>
           Gender
           <span className={hint}>Decides who can see women-only pools. You can&apos;t change it later.</span>
-          <select className="field font-normal" value={form.gender} onChange={set("gender")}>
+          <select className="field select-chevron font-normal" value={form.gender} onChange={set("gender")}>
             <option value="" disabled>Choose…</option>
             <option value="female">Female</option>
             <option value="male">Male</option>
@@ -90,6 +90,6 @@ export default function FinishProfilePage() {
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={!email || busy}>{busy ? "Creating…" : "Create account"}</button>
       </form>
-    </>
+    </div>
   );
 }

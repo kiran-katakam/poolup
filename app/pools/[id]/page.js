@@ -86,98 +86,101 @@ function Pool() {
   const canJoin = !pool.isMember && open && !pool.isFull;
 
   return (
-    <>
-      {(badge || pool.womenOnly) && (
-        <p className="mb-3 flex flex-wrap gap-2">
-          {badge && (
-            <span className={`rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
-              {badge.text}
+    // Members get the chat as a second column on a laptop; everyone else gets one readable column.
+    <div className={pool.isMember ? "lg:grid lg:grid-cols-2 lg:items-start lg:gap-12" : "max-w-xl"}>
+      <div>
+        {(badge || pool.womenOnly) && (
+          <p className="mb-3 flex flex-wrap gap-2">
+            {badge && (
+              <span className={`rounded border-2 px-2 py-0.5 font-display text-lg font-bold tracking-[0.06em] ${badge.className}`}>
+                {badge.text}
+              </span>
+            )}
+            {pool.womenOnly && (
+              <span className="rounded border-2 border-ink px-2 py-0.5 font-display text-lg font-bold uppercase tracking-[0.06em]">Women only</span>
+            )}
+          </p>
+        )}
+        <h1 className="font-display text-[34px] font-bold leading-[1.05] text-balance">
+          {pool.fromLabel} <span aria-hidden="true">→</span><span className="sr-only">to</span> {pool.toLabel}
+        </h1>
+        <p className="mt-2 font-mono text-[15px]">{formatWindow(pool.departStart, pool.departEnd)}</p>
+
+        <section aria-label="Fare" className="mt-5 flex flex-col items-center rounded-[10px] bg-ink px-4 py-6 text-center">
+          <Fare value={pool.farePerPerson} className="text-[56px] leading-none" />
+          <span className="mt-2 text-xs tracking-[0.14em] text-white">{open ? "EACH NOW" : "EACH"}</span>
+          <span className="mt-4"><Seats taken={pool.memberCount} capacity={pool.capacity} size="h-5 w-8" tone="yellow" /></span>
+          {open && (
+            <span className="mt-3 text-[15px] text-white">
+              {seatsLeftText(pool)} · ₹{pool.totalFare} split {pool.memberCount} {pool.memberCount === 1 ? "way" : "ways"}
             </span>
           )}
-          {pool.womenOnly && (
-            <span className="rounded border-2 border-ink px-2 py-0.5 font-display text-lg font-bold uppercase tracking-[0.06em]">Women only</span>
+        </section>
+
+        <section aria-labelledby="members-heading" className="mt-6">
+          <h2 id="members-heading" className="font-display text-2xl font-bold">In this pool</h2>
+          <ul className="mt-2 flex flex-col">
+            {pool.members.map((m, i) => (
+              <li key={m.id} className="flex min-h-14 items-center justify-between gap-3 border-b border-line py-2">
+                <span className="text-[17px]">
+                  {m.name}
+                  {m.id === myId && <span className="font-semibold"> (you)</span>}
+                  {i === 0 && <span className="text-sm text-muted"> · made this pool</span>}
+                </span>
+                {m.phone && m.id !== myId && (
+                  <a href={`https://wa.me/91${m.phone}`} target="_blank" rel="noopener noreferrer"
+                    aria-label={`Message ${m.name} on WhatsApp`}
+                    className="btn btn-outline min-h-11 w-auto shrink-0 px-3 text-base">
+                    WhatsApp
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+          {pool.isMember && open && (
+            <p className="mt-2 text-sm text-muted">WhatsApp buttons show only for people who chose to share their number.</p>
           )}
-        </p>
-      )}
-      <h1 className="font-display text-[34px] font-bold leading-[1.05] text-balance">
-        {pool.fromLabel} <span aria-hidden="true">→</span><span className="sr-only">to</span> {pool.toLabel}
-      </h1>
-      <p className="mt-2 font-mono text-[15px]">{formatWindow(pool.departStart, pool.departEnd)}</p>
+        </section>
 
-      <section aria-label="Fare" className="mt-5 flex flex-col items-center rounded-[10px] bg-ink px-4 py-6 text-center">
-        <Fare value={pool.farePerPerson} className="text-[56px] leading-none" />
-        <span className="mt-2 text-xs tracking-[0.14em] text-white">{open ? "EACH NOW" : "EACH"}</span>
-        <span className="mt-4"><Seats taken={pool.memberCount} capacity={pool.capacity} size="h-5 w-8" tone="yellow" /></span>
-        {open && (
-          <span className="mt-3 text-[15px] text-white">
-            {seatsLeftText(pool)} · ₹{pool.totalFare} split {pool.memberCount} {pool.memberCount === 1 ? "way" : "ways"}
-          </span>
+        {error && <p role="alert" className="mt-5 font-semibold text-bad">{error}</p>}
+
+        {canJoin && (
+          <div className="mt-6 flex flex-col gap-3">
+            <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
+              <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} className="size-5 shrink-0 accent-ink" />
+              Share my WhatsApp number with this pool
+            </label>
+            <button type="button" className="btn" disabled={busy} onClick={() => act("join", { sharePhone: share })}>
+              {busy ? "Joining…" : `Join for ₹${Math.ceil(pool.totalFare / (pool.memberCount + 1))} each`}
+            </button>
+          </div>
         )}
-      </section>
 
-      <section aria-labelledby="members-heading" className="mt-6">
-        <h2 id="members-heading" className="font-display text-2xl font-bold">In this pool</h2>
-        <ul className="mt-2 flex flex-col">
-          {pool.members.map((m, i) => (
-            <li key={m.id} className="flex min-h-14 items-center justify-between gap-3 border-b border-line py-2">
-              <span className="text-[17px]">
-                {m.name}
-                {m.id === myId && <span className="font-semibold"> (you)</span>}
-                {i === 0 && <span className="text-sm text-muted"> · made this pool</span>}
-              </span>
-              {m.phone && m.id !== myId && (
-                <a href={`https://wa.me/91${m.phone}`} target="_blank" rel="noopener noreferrer"
-                  aria-label={`Message ${m.name} on WhatsApp`}
-                  className="btn btn-outline min-h-11 w-auto shrink-0 px-3 text-base">
-                  WhatsApp
-                </a>
-              )}
-            </li>
-          ))}
-        </ul>
         {pool.isMember && open && (
-          <p className="mt-2 text-sm text-muted">WhatsApp buttons show only for people who chose to share their number.</p>
-        )}
-      </section>
-
-      {error && <p role="alert" className="mt-5 font-semibold text-bad">{error}</p>}
-
-      {canJoin && (
-        <div className="mt-6 flex flex-col gap-3">
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
-            <input type="checkbox" checked={share} onChange={(e) => setShare(e.target.checked)} className="size-5 shrink-0 accent-ink" />
+          <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
+            <input type="checkbox" checked={pool.iShared} disabled={busy}
+              onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
             Share my WhatsApp number with this pool
           </label>
-          <button type="button" className="btn" disabled={busy} onClick={() => act("join", { sharePhone: share })}>
-            {busy ? "Joining…" : `Join for ₹${Math.ceil(pool.totalFare / (pool.memberCount + 1))} each`}
-          </button>
-        </div>
-      )}
+        )}
 
-      {pool.isMember && open && (
-        <label className="mt-6 flex min-h-11 cursor-pointer items-center gap-3 text-[15px]">
-          <input type="checkbox" checked={pool.iShared} disabled={busy}
-            onChange={(e) => act("share", { share: e.target.checked })} className="size-5 shrink-0 accent-ink" />
-          Share my WhatsApp number with this pool
-        </label>
-      )}
+        {pool.isMember && open && (
+          <div className="mt-12 border-t border-line pt-6">
+            {pool.isCreator ? (
+              <button type="button" className="btn btn-outline" disabled={busy}
+                onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
+                Cancel pool
+              </button>
+            ) : (
+              <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
+                Leave pool
+              </button>
+            )}
+          </div>
+        )}
+      </div>
 
       {pool.isMember && <Chat poolId={id} active={pool.isActive} myId={myId} />}
-
-      {pool.isMember && open && (
-        <div className="mt-12 border-t border-line pt-6">
-          {pool.isCreator ? (
-            <button type="button" className="btn btn-outline" disabled={busy}
-              onClick={() => confirm("Cancel this pool for everyone in it?") && act("cancel")}>
-              Cancel pool
-            </button>
-          ) : (
-            <button type="button" className="btn btn-outline" disabled={busy} onClick={() => act("leave")}>
-              Leave pool
-            </button>
-          )}
-        </div>
-      )}
-    </>
+    </div>
   );
 }

@@ -19,7 +19,7 @@ export default function Nav() {
   return (
     <header>
       <div className="bg-yellow">
-        <nav className="mx-auto flex max-w-[480px] items-center justify-between px-4 py-2.5">
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-2.5 sm:px-6">
           <Link href={user ? "/pools" : "/"} className="flex min-h-11 items-center font-display text-[28px] font-bold tracking-[0.04em]">
             POOLUP
           </Link>

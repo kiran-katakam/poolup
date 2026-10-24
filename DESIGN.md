@@ -99,7 +99,7 @@ components:
 
 **Creative North Star: "The Auto Fare Meter"**
 
-The app is the auto itself. Every pool carries its own fare meter: a black panel with yellow monospace digits showing the rupees each person pays right now. The chrome borrows the vehicle's body: an auto-yellow header over a black "hood" band, a cool grey ground like tarmac, white cards like paper receipts, and seat pips shaped like the back bench. It is built phone-first (390px, a 480px column on anything wider) for use outdoors, so contrast and tap size outrank decoration.
+The app is the auto itself. Every pool carries its own fare meter: a black panel with yellow monospace digits showing the rupees each person pays right now. The chrome borrows the vehicle's body: an auto-yellow header over a black "hood" band, a cool grey ground like tarmac, white cards like paper receipts, and seat pips shaped like the back bench. It is built phone-first (390px) for use outdoors, and widens to a 1152px container on a laptop, so contrast and tap size outrank decoration.
 
 The mood is utilitarian and batchmate-casual: high contrast, flat, no ornament that does not carry information. Yellow and black do the identifying; green appears only to say seats remain; red only to say something failed.
 
@@ -158,7 +158,7 @@ A two-tone vehicle palette (yellow, black) on a cool grey ground, with two funct
 
 ## Layout
 
-Single column, centred, `max-width: 480px`, 16px side padding, 24px top and bottom. Vertical rhythm moves on a 4/6/12/16/24px scale. Pool cards are one per row: a flexible left column (route, time, creator, seat pips, seats-left) and a fixed 112px meter column on the right. The main call to action is fixed to the bottom edge of the viewport over a ground-to-transparent fade. Controls are 48px tall; links and nav items are at least 44px. The header is a yellow bar with a 10px ink band beneath it on every page.
+Phone first, one column. On wider screens the page container is `max-width: 1152px` (16px side padding, 24px from 640px), and each page decides its own columns: forms stay in a 448px column (pool creation 512px), login puts the demo accounts beside the form, the pools list is a 2-column grid from 768px and 3 from 1280px with the Create button in the page header instead of fixed at the bottom, and a pool page puts the chat in a sticky right column for members. The landing page is a two-column hero (headline, fare-drop table) followed by how it works, features, places and an ink call-to-action band. Vertical rhythm moves on a 4/6/12/16/24px scale. Pool cards are one per row: a flexible left column (route, time, creator, seat pips, seats-left) and a fixed 112px meter column on the right. The main call to action is fixed to the bottom edge of the viewport over a ground-to-transparent fade. Controls are 48px tall; links and nav items are at least 44px. The header is a yellow bar with a 10px ink band beneath it on every page.
 
 ## Elevation & Depth
 
@@ -189,7 +189,7 @@ Yellow mono bold figure on ink. When the value falls, the new figure drops in fr
 White, 1px Field Stroke border, 6px radius, 48px min height, 16px text, ink caret. Focus: border turns ink with the ink outline flush (0 offset). Selects replace the native arrow with an ink chevron. Code entry fields are mono, 20px, 0.3em tracking.
 
 ### Navigation
-Yellow bar, 480px inner column. Left: "POOLUP" wordmark linking to /pools when signed in, / otherwise. Right: Pools link (hidden on /pools), first name, a dot, Log out; or Log in when signed out. Links 15px/600, underline on hover with 4px offset. Same on mobile and desktop.
+Yellow bar, same 1152px inner column as the page. Left: "POOLUP" wordmark linking to /pools when signed in, / otherwise. Right: Pools link (hidden on /pools), Account (hidden on /account, which holds Log out); or Log in when signed out. Links 15px/600, underline on hover with 4px offset. Same on mobile and desktop.
 
 ### Links
 Bold 600, underlined with 2px thickness and 3px offset.

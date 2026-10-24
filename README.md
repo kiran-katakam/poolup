@@ -27,7 +27,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 ## Phase 3: women-only pools
 
 - Pick your gender once when you sign up (OTP or Google); it can't be changed later. A woman can tick "Women only" when she creates a pool; the pool shows a "Women only" badge, and only women can see or join it. For anyone else it is hidden and answers 404.
-- `demo2@vitapstudent.ac.in` is the female demo account, so use it to try women-only pools. `demo1` and `demo3` have no gender set.
+- There are four demo accounts: `demo2` and `demo4` are female (use them to try women-only pools), `demo1` and `demo3` are male.
 - The Account page (top right) lets you edit your name and WhatsApp number, shows your email and gender read-only, and has the Log out button.
 
 ## Phase 4: Google sign-in
@@ -36,7 +36,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## Try it (2 minutes)
 
-The seed adds four sample pools run by seed-only "(demo)" accounts, one of them women-only (only `demo2` can see it). Those accounts can't log in. The pools depart soon after seed time and are deleted 1 day after their departure window, so you may need to create a pool yourself. `demo1` to `demo3` start in no pool, so this path works either way:
+The seed adds four sample pools run by seed-only "(demo)" accounts, one of them women-only (only `demo2` and `demo4` can see it). Those accounts can't log in. The pools depart soon after seed time and are deleted 1 day after their departure window, so you may need to create a pool yourself. `demo1` to `demo3` start in no pool, so this path works either way:
 
 1. Open the live site and log in as `demo1@vitapstudent.ac.in`. The password is shown on the login page.
 2. Create a pool.
@@ -44,7 +44,7 @@ The seed adds four sample pools run by seed-only "(demo)" accounts, one of them 
 4. Watch the ₹ each figure drop as people join, and the WhatsApp button appear for members who shared.
 5. Send a chat message from one window and watch it show up in the other.
 
-Real sign-up needs a college inbox, so reviewers should use the demo accounts. `demo3@vitapstudent.ac.in` also exists if you want a third member.
+Real sign-up needs a college inbox, so reviewers should use the demo accounts. `demo3` and `demo4` also exist if you want more members. All four are listed on the login page.
 
 ## Setup
 
@@ -55,7 +55,7 @@ git clone https://github.com/kiran-katakam/poolup.git
 cd poolup
 npm install
 cp .env.example .env     # then fill it in, see below
-npm run seed             # demo1-3 logins plus sample pools by seed-only accounts
+npm run seed             # demo1-4 logins plus sample pools by seed-only accounts
 npm run dev              # http://localhost:3000
 npm test                 # unit tests
 ```
@@ -101,7 +101,7 @@ Import the repo, add the variables above (eight with Google sign-in), and deploy
 - No rate limit on chat messages.
 - Pools and their chat messages are deleted 1 day after the departure window ends.
 - Gender is self-declared, with no verification.
-- Gender can't be changed after sign-up. Accounts made before this rule (like `demo1` and `demo3`) show "Not set" and count as not female.
+- Gender can't be changed after sign-up. Accounts made before this rule show "Not set" and count as not female.
 - Reviewers can't try Google sign-in without a college Google account; it is shown in the demo video instead.
 - Google accounts made before sign-up asked for a password have none; they can set one with "Forgot password?".
 - Not built yet: match alerts, auto queue.

@@ -70,7 +70,7 @@ export default function NewPoolPage() {
   const each = Math.ceil(Number(form.fare) / form.capacity);
 
   return (
-    <>
+    <div className="mx-auto max-w-lg">
       <h1 className="font-display text-[34px] font-bold leading-none">Create a pool</h1>
 
       {mine && (
@@ -149,6 +149,6 @@ export default function NewPoolPage() {
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={busy}>{busy ? "Creating…" : "Create pool"}</button>
       </form>
-    </>
+    </div>
   );
 }

@@ -42,7 +42,7 @@ export default function PoolCard({ pool }) {
   const creator = pool.members[0]?.name.split(" ")[0];
   return (
     <Link href={`/pools/${pool.id}`}
-      className="grid grid-cols-[1fr_112px] overflow-hidden rounded-[10px] border border-line bg-white hover:border-ink">
+      className="grid h-full grid-cols-[1fr_112px] overflow-hidden rounded-[10px] border border-line bg-white hover:border-ink">
       <span className="flex flex-col p-3">
         {pool.womenOnly && (
           <span className="mb-1.5 self-start rounded border-2 border-ink px-1.5 font-display text-[13px] font-bold uppercase tracking-[0.06em]">Women only</span>
