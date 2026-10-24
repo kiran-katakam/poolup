@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client.js";
@@ -80,7 +81,10 @@ export default function AccountPage() {
         <p role="status" className="min-h-6 text-center font-semibold text-go">{status === "saved" ? "Saved" : ""}</p>
       </form>
 
-      <button type="button" onClick={logOut} className="link mt-2 min-h-11 cursor-pointer text-[15px]">Log out</button>
+      <div className="mt-2 flex flex-col items-start">
+        <Link href="/forgot-password" className="link inline-flex min-h-11 items-center text-[15px]">Change password</Link>
+        <button type="button" onClick={logOut} className="link min-h-11 cursor-pointer text-[15px]">Log out</button>
+      </div>
     </>
   );
 }

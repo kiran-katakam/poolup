@@ -12,7 +12,7 @@ export default function FinishProfilePage() {
   const router = useRouter();
   const [email, setEmail] = useState(""); // "" = loading
   const [expired, setExpired] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", gender: "" });
+  const [form, setForm] = useState({ name: "", phone: "", gender: "", password: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -80,6 +80,12 @@ export default function FinishProfilePage() {
             <option value="male">Male</option>
             <option value="unspecified">Prefer not to say</option>
           </select>
+        </label>
+        <label className={label}>
+          Password
+          <span className={hint}>At least 8 characters. Lets you log in with your email too, not only Google.</span>
+          <input className="field font-normal" type="password" autoComplete="new-password"
+            value={form.password} onChange={set("password")} />
         </label>
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={!email || busy}>{busy ? "Creating…" : "Create account"}</button>

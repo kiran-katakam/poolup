@@ -14,7 +14,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## What Phase 1 does
 
-- Register with a college email and a one-time code (OTP) sent to that inbox. Log in with email and password after that.
+- Register with a college email and a one-time code (OTP) sent to that inbox. Log in with email and password after that. "Forgot password?" on the login page (and "Change password" on the Account page) emails a 6-digit code and sets a new password.
 - Create a pool: from, to, a departure window of up to 3 hours (up to 7 days ahead), 2 to 5 seats, estimated total fare (default ₹400).
 - Browse pools, filter by start, destination and date. Each pool shows seats left and the per-person fare.
 - Join, leave, cancel (creator only). One active pool per student. Pools expire after their departure window.
@@ -32,7 +32,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 
 ## Phase 4: Google sign-in
 
-- "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number and gender on a "Finish your profile" page, with no OTP and no password.
+- "Continue with Google" on the login and register pages, for Google accounts with a college email only. An existing account logs straight in. A new one adds a WhatsApp number, gender and password on a "Finish your profile" page, with no OTP. The password lets them log in by email too.
 
 ## Try it (2 minutes)
 
@@ -103,7 +103,7 @@ Import the repo, add the variables above (eight with Google sign-in), and deploy
 - Gender is self-declared, with no verification.
 - Gender can't be changed after sign-up. Accounts made before this rule (like `demo1` and `demo3`) show "Not set" and count as not female.
 - Reviewers can't try Google sign-in without a college Google account; it is shown in the demo video instead.
-- A student who signed up with Google has no password and can't set one later, so they can only log in with Google.
+- Google accounts made before sign-up asked for a password have none; they can set one with "Forgot password?".
 - Not built yet: match alerts, auto queue.
 
 ## Next

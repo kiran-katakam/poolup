@@ -54,6 +54,7 @@ export default function LoginPage() {
           <input className="field font-normal" type="password" autoComplete="current-password"
             value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
+        <Link href="/forgot-password" className="link -mt-3 inline-flex min-h-11 items-center self-start text-sm">Forgot password?</Link>
         {error && <p role="alert" className="font-semibold text-bad">{error}</p>}
         <button type="submit" className="btn" disabled={busy}>{busy ? "Logging in…" : "Log in"}</button>
       </form>
