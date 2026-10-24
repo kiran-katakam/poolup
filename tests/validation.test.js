@@ -41,6 +41,8 @@ describe("createPoolSchema", () => {
   });
   it("rejects from === to", () => {
     expect(parseBody(schema, pool({ to: "campus" })).error).toBe("Pick two different places");
+    expect(parseBody(schema, pool({ from: "railway", to: "airport" })).error).toBe("One end must be VIT-AP Campus");
+    expect(parseBody(schema, pool({ from: "railway", to: "campus" })).data.to).toBe("campus");
   });
   it("rejects window of 3h 1min, allows 3h", () => {
     expect(parseBody(schema, pool({ departEnd: iso(1 * H + 3 * H + 60000) })).error).toBe("Pick a window of 3 hours or less");

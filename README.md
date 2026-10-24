@@ -15,7 +15,7 @@ VIT-AP students (`@vitapstudent.ac.in`) travelling between campus and five city 
 ## What Phase 1 does
 
 - Register with a college email and a one-time code (OTP) sent to that inbox. Log in with email and password after that. "Forgot password?" on the login page (and "Change password" on the Account page) emails a 6-digit code and sets a new password.
-- Create a pool: from, to, a departure window of up to 3 hours (up to 7 days ahead), 2 to 5 seats, estimated total fare (default ₹400).
+- Create a pool: from, to (one end is always VIT-AP Campus), a departure window of up to 3 hours (up to 7 days ahead), 2 to 5 seats, estimated total fare (default ₹400).
 - Browse pools, filter by start, destination and date. Each pool shows seats left and the per-person fare.
 - Join, leave, cancel (creator only). One active pool per student. Pools expire after their departure window.
 - Sharing your WhatsApp number is a choice per pool (on by default). Members see only the numbers that were shared, with a WhatsApp button.
