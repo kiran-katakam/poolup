@@ -6,12 +6,12 @@
 npm test      # vitest run
 ```
 
-Last run: 4 files, 73 tests, all passing.
+Last run: 4 files, 77 tests, all passing.
 
 | File | What it checks |
 |---|---|
 | `tests/rules.test.js` | The six places; college email check (both domains, wrong domains, capitals); per-person fare rounds up; `isActive` needs open status and a future end; `joinBlockReason` for each reason (cancelled, expired, full, already a member, `has_active_pool`) and its order; populated members; `visibleMembers` hides phones from non-members and shows only shared phones to members; `istDayRange` is IST midnight to midnight; `chatBlockReason` lets members of an active pool post, blocks non-members, and makes an ended pool read-only; `canSeePool` shows women-only pools only to women (not to men, unset or "prefer not to say") but also to its current members; `googleAccountError` refuses an unverified Google email and a non-college one. |
-| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most; profile gender must be one of the three options; the Google finish-profile form trims the name and rejects a bad phone. |
+| `tests/validation.test.js` | Zod schemas: register lowercases the email, bad phone and bad OTP rejected, non-college email gives the exact message, login normalizes email; create pool applies defaults and rejects from equal to to, a 3 h 1 min window (3 h allowed), an end in the past, a start 8 days out, end before start; join defaults sharing to on; share needs a boolean; `parseBody` never throws on junk; a chat message is trimmed, blank is rejected, and 500 characters is the most; register and the Google finish-profile form need a gender from the three options; the finish-profile form trims the name and rejects a bad phone; the account form edits name and phone and drops any gender sent to it. |
 | `tests/auth.test.js` | OTP is always 6 digits; password/OTP hash accepts the right value and rejects a wrong one; session token round-trips the user id, returns null for garbage or a token signed with another secret, and fails loudly when `JWT_SECRET` is missing; the Google signup token round-trips email and name, is not accepted as a session, a session token is not accepted as a signup token, and a tampered token is rejected. |
 | `tests/client.test.js` | Time display is IST, not UTC; midnight and morning; a window shows the day once or twice depending on IST midnight; the next-days list uses IST dates even when UTC is still on the previous day. |
 
@@ -67,9 +67,9 @@ Run against https://poolup.kirankatakam.me (or `npm run dev`). Demo password is 
 | W3 | Women-only, direct link | As demo1, open a women-only pool's URL, and call `POST /api/pools/<id>/join`. | Pool not found (404), not 403. |
 | W4 | Women-only, non-female creates | As demo1, `POST /api/pools` with `womenOnly: true`. | 403. Nothing created. |
 | W5 | Women-only, join | As demo2, open a women-only pool (create one as demo2 per W1) from `/pools`. | It is listed, opens, and you appear in the member list. |
-| W6 | Profile gender | As demo3, open `/profile`, set gender to female, save, reload. Then set it back to Prefer not to say. | The value is kept after each save. |
-| W7 | Gender change keeps access | A member of a women-only pool changes gender to Male in `/profile`. | They can still open the pool and Leave. |
-| G1 | Google, new account | Logged out, press "Continue with Google" on `/login` and pick a college Google account that has no PoolUp account. | You land on `/finish-profile` with your email shown and your name filled in. Add a WhatsApp number and press Create account: you land on `/pools`, logged in. |
+| W6 | Gender at sign-up | On `/register` step 2 (or `/finish-profile`), leave Gender on "Choose…" and submit. | "Pick your gender". Picking one creates the account with that gender. |
+| W7 | Account page | Log in, press Account in the nav. Change your name and WhatsApp number, save, reload. Then press Log out. | Email and gender are shown but not editable. The new name and number are kept after reload. Log out lands on the home page. A bad number shows "Enter a 10-digit Indian mobile number". |
+| G1 | Google, new account | Logged out, press "Continue with Google" on `/login` and pick a college Google account that has no PoolUp account. | You land on `/finish-profile` with your email shown and your name filled in. Add a WhatsApp number, pick a gender and press Create account: you land on `/pools`, logged in. |
 | G2 | Google, existing account | Press "Continue with Google" with a college Google account already registered (by OTP or by G1). | Straight to `/pools`, logged in. No finish-profile step. |
 | G3 | Google, non-college account | Press "Continue with Google" and pick a gmail.com account. | Back on `/login` with "Use your @vitapstudent.ac.in or @vitap.ac.in Google account." No account is created. |
 | G4 | Google, cancelled | Press "Continue with Google", then press Cancel on Google's screen (or go back). | Back on `/login` with "Google sign-in didn't finish. Try again." |

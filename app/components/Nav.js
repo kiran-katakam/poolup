@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client.js";
 
@@ -9,19 +9,12 @@ const navLink = "flex min-h-11 items-center px-2 text-[15px] font-semibold under
 
 export default function Nav() {
   const pathname = usePathname();
-  const router = useRouter();
   const [user, setUser] = useState(undefined); // undefined = still checking
 
   // Re-check on every page change so the nav updates right after login or logout.
   useEffect(() => {
     api("/api/auth/me").then((r) => setUser(r.ok ? r.data.user : null));
   }, [pathname]);
-
-  async function logOut() {
-    await api("/api/auth/logout", { method: "POST" });
-    setUser(null);
-    router.push("/");
-  }
 
   return (
     <header>
@@ -33,9 +26,7 @@ export default function Nav() {
           {user && (
             <div className="flex items-center">
               {pathname !== "/pools" && <Link href="/pools" className={navLink}>Pools</Link>}
-              <Link href="/profile" className={`${navLink} max-w-28 truncate`}>{user.name.split(" ")[0]}</Link>
-              <span aria-hidden="true">·</span>
-              <button type="button" onClick={logOut} className={`${navLink} cursor-pointer`}>Log out</button>
+              {pathname !== "/account" && <Link href="/account" className={navLink}>Account</Link>}
             </div>
           )}
           {user === null && pathname !== "/login" && (

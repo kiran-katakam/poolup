@@ -20,7 +20,7 @@ export async function POST(request) {
     let user;
     try {
       // Email comes only from the signed cookie (Google verified it); no passwordHash for Google accounts.
-      user = await User.create({ email: normalizeEmail(signup.email), name: data.name, phone: data.phone });
+      user = await User.create({ email: normalizeEmail(signup.email), name: data.name, phone: data.phone, gender: data.gender });
     } catch (e) {
       if (e.code === 11000) return fail(409, "You already have an account. Log in instead.");
       throw e;

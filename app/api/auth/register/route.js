@@ -34,6 +34,7 @@ export async function POST(request) {
         email: data.email,
         name: data.name,
         phone: data.phone,
+        gender: data.gender,
         passwordHash: await hashSecret(data.password),
       });
     } catch (e) {
