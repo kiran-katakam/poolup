@@ -11,10 +11,10 @@ if (!password) throw new Error("DEMO_PASSWORD is not set");
 // Reviewer accounts, 2 female and 2 male (women-only pools need a female one). They start in no pool.
 // Keep in sync with DEMO_ACCOUNTS in app/login/page.js.
 const demos = [
-  { email: "demo1@vitapstudent.ac.in", name: "Aarav Demo", phone: "9000000001", gender: "male" },
-  { email: "demo2@vitapstudent.ac.in", name: "Diya Demo", phone: "9000000002", gender: "female" },
-  { email: "demo3@vitapstudent.ac.in", name: "Rohan Demo", phone: "9000000003", gender: "male" },
-  { email: "demo4@vitapstudent.ac.in", name: "Ananya Demo", phone: "9000000004", gender: "female" },
+  { email: "demo1@vitapstudent.ac.in", name: "Aarav Demo", nickname: "Aarav", phone: "9000000001", gender: "male" },
+  { email: "demo2@vitapstudent.ac.in", name: "Diya Demo", nickname: "Diya", phone: "9000000002", gender: "female" },
+  { email: "demo3@vitapstudent.ac.in", name: "Rohan Demo", nickname: "Rohan", phone: "9000000003", gender: "male" },
+  { email: "demo4@vitapstudent.ac.in", name: "Ananya Demo", nickname: "Ananya", phone: "9000000004", gender: "female" },
 ];
 
 // Seed-only members fill the listed pools. .invalid is a reserved domain, so no real inbox exists.
@@ -38,7 +38,8 @@ const pools = [
 
 async function upsertUser(account, passwordHash) {
   // Only demo/seed emails are touched, so the file is the source of truth for gender.
-  const fields = { $set: { name: account.name, phone: account.phone, passwordHash } };
+  // Seed-only accounts use their name as the nickname, so "(demo)" stays visible.
+  const fields = { $set: { name: account.name, nickname: account.nickname ?? account.name, phone: account.phone, passwordHash } };
   if (account.gender) fields.$set.gender = account.gender;
   else fields.$unset = { gender: 1 };
   return User.findOneAndUpdate(

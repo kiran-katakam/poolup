@@ -62,7 +62,7 @@ export default function FinishProfilePage() {
         </div>
         <label className={label}>
           Your name
-          <span className={hint}>Pool members see this.</span>
+          <span className={hint}>Others see a nickname from your email, which you can change later in Account.</span>
           <input className="field font-normal" autoComplete="name" value={form.name} onChange={set("name")} />
         </label>
         <label className={label}>
