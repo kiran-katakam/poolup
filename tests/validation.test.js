@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   otpRequestSchema, registerSchema, loginSchema,
-  createPoolSchema, joinSchema, shareSchema, messageSchema, profileSchema, googleCompleteSchema, parseBody,
+  createPoolSchema, joinSchema, shareSchema, messageSchema, accountSchema, googleCompleteSchema, parseBody,
 } from "../lib/validation.js";
 
 const now = new Date("2026-10-24T10:00:00Z");
@@ -12,9 +12,9 @@ const pool = (o = {}) => ({
   departStart: iso(1 * H), departEnd: iso(2 * H), ...o,
 });
 const schema = createPoolSchema(now);
+const reg = { email: " Demo1@VITAPSTUDENT.ac.in ", otp: "123456", name: " Ravi ", phone: "9876543210", password: "password1", gender: "female" };
 
 describe("auth schemas", () => {
-  const reg = { email: " Demo1@VITAPSTUDENT.ac.in ", otp: "123456", name: " Ravi ", phone: "9876543210", password: "password1" };
   it("register passes and lowercases email", () => {
     const r = parseBody(registerSchema, reg);
     expect(r.data.email).toBe("demo1@vitapstudent.ac.in");
@@ -82,12 +82,14 @@ describe("messageSchema", () => {
 });
 
 describe("women-only schemas", () => {
-  it("profileSchema rejects unknown genders", () =>
-    expect(parseBody(profileSchema, { gender: "x" }).error).toBe("Pick an option from the list"));
+  it("register needs a gender from the list", () => {
+    expect(parseBody(registerSchema, { ...reg, gender: undefined }).error).toBe("Pick your gender");
+    expect(parseBody(registerSchema, { ...reg, gender: "x" }).error).toBe("Pick your gender");
+  });
   it("createPoolSchema defaults womenOnly to false", () =>
     expect(parseBody(schema, pool()).data.womenOnly).toBe(false));
-  it("profileSchema accepts the three genders", () => {
-    for (const gender of ["female", "male", "unspecified"]) expect(parseBody(profileSchema, { gender }).data.gender).toBe(gender);
+  it("register accepts the three genders", () => {
+    for (const gender of ["female", "male", "unspecified"]) expect(parseBody(registerSchema, { ...reg, gender }).data.gender).toBe(gender);
   });
   it("createPoolSchema keeps womenOnly: true", () =>
     expect(parseBody(schema, pool({ womenOnly: true })).data.womenOnly).toBe(true));
@@ -95,9 +97,21 @@ describe("women-only schemas", () => {
 
 describe("googleCompleteSchema", () => {
   it("rejects a 9-digit phone", () =>
-    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "987654321" }).error)
+    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "987654321", gender: "male" }).error)
       .toBe("Enter a 10-digit Indian mobile number"));
-  it("accepts a valid name and phone", () =>
-    expect(parseBody(googleCompleteSchema, { name: " Ravi ", phone: "9876543210" }).data)
+  it("needs a gender", () =>
+    expect(parseBody(googleCompleteSchema, { name: "Ravi", phone: "9876543210" }).error).toBe("Pick your gender"));
+  it("accepts a valid name, phone and gender", () =>
+    expect(parseBody(googleCompleteSchema, { name: " Ravi ", phone: "9876543210", gender: "male" }).data)
+      .toEqual({ name: "Ravi", phone: "9876543210", gender: "male" }));
+});
+
+describe("accountSchema", () => {
+  it("trims the name and keeps the phone", () =>
+    expect(parseBody(accountSchema, { name: " Ravi ", phone: "9876543210" }).data)
       .toEqual({ name: "Ravi", phone: "9876543210" }));
+  it("drops gender, so it can't be changed after sign-up", () =>
+    expect(parseBody(accountSchema, { name: "Ravi", phone: "9876543210", gender: "female" }).data.gender).toBeUndefined());
+  it("rejects a bad phone", () =>
+    expect(parseBody(accountSchema, { name: "Ravi", phone: "12345" }).error).toBe("Enter a 10-digit Indian mobile number"));
 });
