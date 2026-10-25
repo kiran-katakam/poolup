@@ -1,19 +1,21 @@
-<!-- Draft: edit into your own voice before submitting. -->
 # PoolUp write-up
 
-**Problem and user.** VIT-AP is about 18 km from Vijayawada, and an auto to the station or airport costs around ₹400 if you go alone. Students look for company in scattered WhatsApp groups. PoolUp is for VIT-AP students: one place that shows every pool on a route and the per-person fare, which drops from ₹400 toward ₹100 as seats fill.
+**Problem and user.** VIT-AP is about 18 km from Vijayawada. The two daily buses are always full, and an auto costs around ₹400 if you go alone. Students look for company in scattered WhatsApp groups, so most never learn that someone else was leaving ten minutes later. PoolUp is for VIT-AP students and staff: one place that shows every pool on a route, with a per-person fare that drops from ₹400 toward ₹100 as seats fill.
 
-**Key decisions.**
-1. College email plus an OTP to register, password after that. Only verified students are in, and nobody has to enter a code on every login. Demo accounts are seeded because reviewers cannot receive a college email.
-2. WhatsApp number sharing is opt-in per pool. Students already coordinate on WhatsApp, so a one-tap link is the fast path, but nobody's number goes out without their say. Members see only the numbers that were shared.
-3. One active pool per student, a window of at most 3 hours, and six fixed places. This keeps the list small and the rules checkable.
+**Key product decisions.**
+1. **Verified college email, then a password.** Sign-up needs a code sent to an @vitapstudent.ac.in or @vitap.ac.in inbox, so everyone in a pool is a real member of campus. After that it is a normal login. I seeded demo accounts because reviewers cannot receive a college email.
+2. **Opt-in sharing and women-only pools.** WhatsApp numbers are shared per pool, only if the owner chooses, and only members see them. Women-only pools are invisible to everyone else (404, not 403). Safety is the main reason students would hesitate to ride with strangers.
+3. **Tight rules.** One active pool per student, a departure window of at most 3 hours, six fixed places, and one end always the campus. This keeps the list short and every rule testable.
 
-**Cut, and next.** I split the idea into six phases and shipped only the first: accounts and pools. Chat, women-only pools, Google sign-in, match alerts and the auto queue are not built. Next I would build live chat, so people who do not share a number can still coordinate.
+**Cut, and next.** I cut match alerts (email me when a pool matches my saved route) and the auto-queue for drivers at the campus gate. Match alerts come next, because they turn PoolUp into something that finds you.
 
 **What broke or surprised me.**
-- Review found races. Two people could take the last seat, so joining is now one conditional database update. Parallel OTP guesses could beat the 5-try limit, so each attempt is claimed atomically. Double-tapping "send code" could create two codes, so that is a filtered upsert.
-- Next 16 with `cacheComponents` refused to build `/pools/[id]` until I wrapped the nav in Suspense.
-- Time zones: Vercel runs in UTC and students think in IST. I fixed all display and day filtering to IST and wrote tests for it, including when UTC is still on the previous day.
-- Seeded demo pools depart before anyone reviews the site. I left them to expire and wrote a two-minute path in the README: log in as demo1, create a pool, join it as demo2.
+- **Chat and WebSockets.** I wanted live chat over WebSockets, which I had never used. Vercel's serverless functions cannot hold a persistent connection, so a WebSocket server needed separate hosting I did not have time to learn and run. I shipped 2-second polling instead, so messages can lag by up to 2 seconds.
+- **Races.** Two people could take the last seat and parallel code guesses could beat the 5-try limit. Both are now single atomic database operations.
+- **Time zones.** Vercel runs in UTC but students think in IST, so all display and day filtering is IST, with tests.
 
-Known gaps: two simultaneous joins to two different pools can slip through, and login has no brute-force limit.
+**Known gaps.**
+- **Trust and safety:** gender is self-declared and never verified, and there is no way to report a user. Women-only pools rely on honesty.
+- **Cancelling:** the creator can cancel a pool without its members' consent.
+- **No notifications:** members learn about a cancellation or a new message only when they open the app.
+- **Abuse:** no login brute-force limit, and two simultaneous joins to different pools can slip through.
